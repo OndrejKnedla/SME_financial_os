@@ -10,8 +10,8 @@ const nextConfig: NextConfig = {
     ignoreDuringBuilds: true,
   },
   typescript: {
-    // Temporarily ignore build errors for Vercel deployment debugging
-    ignoreBuildErrors: true,
+    // Type errors are checked separately with `pnpm typecheck`
+    ignoreBuildErrors: false,
   },
 };
 
