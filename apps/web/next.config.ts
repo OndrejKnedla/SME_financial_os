@@ -10,6 +10,12 @@ const nextConfig: NextConfig = {
     // Type errors are checked separately with `pnpm typecheck`
     ignoreBuildErrors: false,
   },
+  experimental: {
+    // Include all server files for Vercel deployment
+    outputFileTracingIncludes: {
+      '/*': ['./.next/server/**/*'],
+    },
+  },
 };
 
 export default nextConfig;
