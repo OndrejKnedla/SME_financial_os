@@ -143,7 +143,7 @@ export default function TransactionsPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {transactions.map((tx) => (
+                  {transactions.map((tx: typeof transactions[number]) => (
                     <TableRow key={tx.id}>
                       <TableCell className="font-medium">
                         {formatDate(tx.date)}
