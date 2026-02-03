@@ -1,20 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "version": 2,
   "installCommand": "npm i -g pnpm@10 && pnpm i --no-frozen-lockfile",
-  "builds": [
-    {
-      "src": "apps/web/package.json",
-      "use": "@vercel/next",
-      "config": {
-        "installCommand": "cd ../.. && pnpm --filter @sme-financial-os/db exec prisma generate"
-      }
-    }
-  ],
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "/apps/web/$1"
-    }
-  ]
+  "buildCommand": "pnpm --filter @sme-financial-os/db exec prisma generate && cd apps/web && npx @vercel/next build",
+  "outputDirectory": "apps/web/.vercel/output"
 }
