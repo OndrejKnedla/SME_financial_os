@@ -147,7 +147,7 @@ export default function BankingPage() {
         {/* Bank Accounts Grid */}
         {accounts && accounts.length > 0 && (
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {accounts.map((account) => (
+            {accounts.map((account: typeof accounts[number]) => (
               <Card key={account.id}>
                 <CardHeader className="pb-2">
                   <div className="flex items-start justify-between">
