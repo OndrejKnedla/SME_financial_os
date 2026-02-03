@@ -1,0 +1,32 @@
+{
+  "name": "@sme-financial-os/api",
+  "version": "0.1.0",
+  "private": true,
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./client": "./src/client.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint . --max-warnings 0",
+    "lint:fix": "eslint . --fix"
+  },
+  "dependencies": {
+    "@sme-financial-os/banking": "workspace:*",
+    "@sme-financial-os/db": "workspace:*",
+    "@sme-financial-os/email": "workspace:*",
+    "@sme-financial-os/invoicing": "workspace:*",
+    "@sme-financial-os/ocr": "workspace:*",
+    "@sme-financial-os/shared": "workspace:*",
+    "@react-email/render": "^1.0.4",
+    "@trpc/client": "^11.0.0-rc.660",
+    "@trpc/server": "^11.0.0-rc.660",
+    "superjson": "^2.2.0",
+    "zod": "^3.23.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.0"
+  }
+}

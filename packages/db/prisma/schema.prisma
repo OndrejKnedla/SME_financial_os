@@ -1,0 +1,448 @@
+// SME Financial OS - Prisma Schema
+// Database: PostgreSQL
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ==================== ORGANIZATIONS ====================
+
+model Organization {
+  id        String   @id @default(cuid())
+  name      String
+  taxId     String? // IČO (CZ) or NIP (PL)
+  vatId     String? // DIČ (CZ) or VAT-EU (PL)
+  country   Country  @default(CZ)
+  address   Json? // { street, city, zip, country }
+  currency  Currency @default(CZK)
+
+  // KSeF (Poland)
+  ksefEnabled Boolean @default(false)
+  ksefToken   String? // Encrypted
+
+  // Settings
+  invoicePrefix String @default("INV")
+  invoiceNumber Int    @default(1)
+
+  // Logo
+  logoUrl String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  members      OrganizationMember[]
+  bankAccounts BankAccount[]
+  contacts     Contact[]
+  invoices     Invoice[]
+  expenses     Expense[]
+  categories   Category[]
+  documents    Document[]
+}
+
+enum Country {
+  CZ
+  PL
+  SK
+}
+
+enum Currency {
+  CZK
+  PLN
+  EUR
+}
+
+model OrganizationMember {
+  id             String     @id @default(cuid())
+  organizationId String
+  userId         String
+  role           MemberRole @default(MEMBER)
+
+  createdAt DateTime @default(now())
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([organizationId, userId])
+  @@index([userId])
+}
+
+enum MemberRole {
+  OWNER
+  ADMIN
+  ACCOUNTANT
+  MEMBER
+}
+
+// ==================== USERS ====================
+
+model User {
+  id        String  @id @default(cuid())
+  email     String  @unique
+  name      String?
+  avatarUrl String?
+
+  // Password hash for email/password auth
+  passwordHash String?
+
+  // Email verification
+  emailVerified Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  memberships OrganizationMember[]
+  sessions    Session[]
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([token])
+  @@index([userId])
+}
+
+// ==================== CONTACTS ====================
+
+model Contact {
+  id             String      @id @default(cuid())
+  organizationId String
+  type           ContactType @default(COMPANY)
+  name           String
+  email          String?
+  phone          String?
+  taxId          String? // IČO/NIP
+  vatId          String? // DIČ/VAT
+  address        Json?
+
+  // Defaults for invoicing
+  paymentTerms Int       @default(14) // days
+  currency     Currency?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  invoices     Invoice[]
+
+  @@index([organizationId])
+  @@index([organizationId, name])
+}
+
+enum ContactType {
+  COMPANY
+  INDIVIDUAL
+}
+
+// ==================== INVOICES ====================
+
+model Invoice {
+  id             String        @id @default(cuid())
+  organizationId String
+  contactId      String?
+
+  // Invoice details
+  number String
+  status InvoiceStatus @default(DRAFT)
+  type   InvoiceType   @default(INVOICE)
+
+  // Dates
+  issueDate DateTime  @default(now())
+  dueDate   DateTime
+  paidAt    DateTime?
+
+  // Amounts (in smallest currency unit - cents/haléře/grosze)
+  subtotal  Int      @default(0)
+  taxAmount Int      @default(0)
+  total     Int      @default(0)
+  currency  Currency @default(CZK)
+
+  // Payment
+  variableSymbol String? // CZ specific
+  bankAccountId  String?
+
+  // KSeF (Poland)
+  ksefId     String? // KSeF reference number
+  ksefStatus KsefStatus?
+  ksefXml    String? @db.Text // Stored FA(3) XML
+
+  // Notes
+  notes         String? @db.Text
+  internalNotes String? @db.Text
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  contact      Contact?     @relation(fields: [contactId], references: [id])
+  bankAccount  BankAccount? @relation(fields: [bankAccountId], references: [id])
+  items        InvoiceItem[]
+  payments     Payment[]
+  documents    Document[]
+
+  @@unique([organizationId, number])
+  @@index([organizationId, status])
+  @@index([organizationId, dueDate])
+  @@index([contactId])
+  @@index([variableSymbol])
+}
+
+enum InvoiceStatus {
+  DRAFT
+  SENT
+  VIEWED
+  PAID
+  PARTIALLY_PAID
+  OVERDUE
+  CANCELLED
+}
+
+enum InvoiceType {
+  INVOICE
+  PROFORMA
+  CREDIT_NOTE
+}
+
+enum KsefStatus {
+  PENDING
+  SUBMITTED
+  ACCEPTED
+  REJECTED
+  ERROR
+}
+
+model InvoiceItem {
+  id        String @id @default(cuid())
+  invoiceId String
+
+  description String
+  quantity    Decimal @db.Decimal(10, 2)
+  unitPrice   Int // cents
+  taxRate     Decimal @db.Decimal(5, 2) // e.g., 21.00 for 21%
+  totalNet    Int
+  totalTax    Int
+  totalGross  Int
+
+  position Int @default(0)
+
+  invoice Invoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+
+  @@index([invoiceId])
+}
+
+// ==================== BANKING ====================
+
+model BankAccount {
+  id             String @id @default(cuid())
+  organizationId String
+
+  name          String
+  bankName      String
+  accountNumber String // IBAN or local format
+  currency      Currency @default(CZK)
+
+  // Integration
+  provider          BankProvider?
+  providerAccountId String?
+  accessToken       String? // Encrypted
+  refreshToken      String? // Encrypted
+  tokenExpiresAt    DateTime?
+  lastSyncAt        DateTime?
+
+  isDefault Boolean @default(false)
+  isActive  Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  organization Organization       @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  transactions BankTransaction[]
+  invoices     Invoice[]
+
+  @@index([organizationId])
+}
+
+enum BankProvider {
+  FIO // Direct Fio API
+  POLISH_API // PolishAPI standard
+  TINK // Tink aggregator
+  SALT_EDGE // Salt Edge aggregator
+  MANUAL // Manual entry
+}
+
+model BankTransaction {
+  id            String @id @default(cuid())
+  bankAccountId String
+
+  // Transaction data
+  externalId String? // Bank's transaction ID
+  date       DateTime
+  amount     Int // cents (positive = credit, negative = debit)
+  currency   Currency
+
+  // Details
+  counterpartyName    String?
+  counterpartyAccount String?
+  description         String?
+  variableSymbol      String? // CZ/SK payment matching
+
+  // Categorization
+  categoryId String?
+
+  // Matching
+  matchedPaymentId String? @unique
+
+  createdAt DateTime @default(now())
+
+  bankAccount    BankAccount @relation(fields: [bankAccountId], references: [id], onDelete: Cascade)
+  category       Category?   @relation(fields: [categoryId], references: [id])
+  matchedPayment Payment?    @relation(fields: [matchedPaymentId], references: [id])
+
+  @@unique([bankAccountId, externalId])
+  @@index([bankAccountId, date])
+  @@index([variableSymbol])
+}
+
+// ==================== PAYMENTS ====================
+
+model Payment {
+  id        String @id @default(cuid())
+  invoiceId String
+
+  amount    Int
+  currency  Currency
+  paidAt    DateTime      @default(now())
+  method    PaymentMethod @default(BANK_TRANSFER)
+  reference String?
+
+  invoice     Invoice          @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  transaction BankTransaction?
+
+  @@index([invoiceId])
+}
+
+enum PaymentMethod {
+  BANK_TRANSFER
+  CARD
+  CASH
+  OTHER
+}
+
+// ==================== EXPENSES ====================
+
+model Expense {
+  id             String @id @default(cuid())
+  organizationId String
+  categoryId     String?
+
+  // Expense details
+  date     DateTime
+  amount   Int      @default(0) // cents
+  currency Currency @default(CZK)
+  taxRate  Decimal? @db.Decimal(5, 2)
+  taxAmount Int?
+
+  // Vendor
+  vendorName  String?
+  vendorTaxId String?
+
+  description String? @db.Text
+
+  // Status
+  status ExpenseStatus @default(PENDING)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  category     Category?    @relation(fields: [categoryId], references: [id])
+  documents    Document[]
+
+  @@index([organizationId, date])
+  @@index([organizationId, status])
+}
+
+enum ExpenseStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  PAID
+}
+
+// ==================== DOCUMENTS ====================
+
+model Document {
+  id             String @id @default(cuid())
+  organizationId String
+
+  // File info
+  filename String
+  mimeType String
+  size     Int
+  url      String // R2 URL
+
+  // OCR results
+  ocrStatus     OcrStatus @default(PENDING)
+  ocrResult     Json? // Extracted data
+  ocrConfidence Float?
+
+  // Relations (optional)
+  invoiceId String?
+  expenseId String?
+
+  createdAt DateTime @default(now())
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  invoice      Invoice?     @relation(fields: [invoiceId], references: [id])
+  expense      Expense?     @relation(fields: [expenseId], references: [id])
+
+  @@index([organizationId])
+  @@index([invoiceId])
+  @@index([expenseId])
+}
+
+enum OcrStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+// ==================== CATEGORIES ====================
+
+model Category {
+  id             String       @id @default(cuid())
+  organizationId String
+  name           String
+  color          String       @default("#6366f1")
+  icon           String?
+  type           CategoryType @default(EXPENSE)
+
+  // Accounting
+  accountCode String? // For accounting integration
+
+  organization Organization      @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  expenses     Expense[]
+  transactions BankTransaction[]
+
+  @@unique([organizationId, name, type])
+  @@index([organizationId])
+}
+
+enum CategoryType {
+  INCOME
+  EXPENSE
+}
