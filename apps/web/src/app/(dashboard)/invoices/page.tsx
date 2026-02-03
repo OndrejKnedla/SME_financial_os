@@ -177,7 +177,7 @@ export default function InvoicesPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {invoices.map((invoice) => {
+                {invoices.map((invoice: typeof invoices[number]) => {
                   const status = statusConfig[invoice.status] || { label: 'Draft', variant: 'secondary' as const };
                   const isOverdue =
                     invoice.status !== 'PAID' &&

@@ -184,7 +184,7 @@ export default function ExpensesPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {expenses.map((expense) => {
+                {expenses.map((expense: typeof expenses[number]) => {
                   const status = statusConfig[expense.status] || { label: 'Pending', variant: 'secondary' as const };
 
                   return (

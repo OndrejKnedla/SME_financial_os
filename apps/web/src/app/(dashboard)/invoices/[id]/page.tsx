@@ -354,7 +354,7 @@ export default function InvoiceDetailPage() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {invoice.items.map((item) => (
+                    {invoice.items.map((item: typeof invoice.items[number]) => (
                       <TableRow key={item.id}>
                         <TableCell>{item.description}</TableCell>
                         <TableCell className="text-right">{Number(item.quantity)}</TableCell>
@@ -414,7 +414,7 @@ export default function InvoiceDetailPage() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
-                  {invoice.payments.map((payment) => (
+                  {invoice.payments.map((payment: typeof invoice.payments[number]) => (
                     <div
                       key={payment.id}
                       className="flex items-center justify-between rounded-lg border p-3"

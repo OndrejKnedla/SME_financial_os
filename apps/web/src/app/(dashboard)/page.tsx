@@ -183,7 +183,7 @@ export default function DashboardPage() {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-2">
-                    {overdueInvoices.slice(0, 3).map((invoice) => (
+                    {overdueInvoices.slice(0, 3).map((invoice: typeof overdueInvoices[number]) => (
                       <Link
                         key={invoice.id}
                         href={`/invoices/${invoice.id}`}
@@ -227,7 +227,7 @@ export default function DashboardPage() {
                 <CardContent>
                   {recentInvoices && recentInvoices.length > 0 ? (
                     <div className="space-y-3">
-                      {recentInvoices.slice(0, 3).map((invoice) => (
+                      {recentInvoices.slice(0, 3).map((invoice: typeof recentInvoices[number]) => (
                         <Link
                           key={invoice.id}
                           href={`/invoices/${invoice.id}`}
@@ -270,7 +270,7 @@ export default function DashboardPage() {
                 <CardContent>
                   {recentExpenses && recentExpenses.length > 0 ? (
                     <div className="space-y-3">
-                      {recentExpenses.slice(0, 3).map((expense) => (
+                      {recentExpenses.slice(0, 3).map((expense: typeof recentExpenses[number]) => (
                         <div
                           key={expense.id}
                           className="flex items-center justify-between"

@@ -170,7 +170,7 @@ export default function NewInvoicePage() {
                       <SelectValue placeholder="Select customer" />
                     </SelectTrigger>
                     <SelectContent>
-                      {contacts.map((contact) => (
+                      {contacts.map((contact: typeof contacts[number]) => (
                         <SelectItem key={contact.id} value={contact.id}>
                           {contact.name}
                         </SelectItem>

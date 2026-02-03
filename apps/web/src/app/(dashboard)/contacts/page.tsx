@@ -125,7 +125,7 @@ export default function ContactsPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {contacts.map((contact) => (
+                {contacts.map((contact: typeof contacts[number]) => (
                   <TableRow key={contact.id}>
                     <TableCell className="font-medium">{contact.name}</TableCell>
                     <TableCell>
