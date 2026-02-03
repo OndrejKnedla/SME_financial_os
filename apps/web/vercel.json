@@ -1,5 +1,0 @@
-{
-  "$schema": "https://openapi.vercel.sh/vercel.json",
-  "installCommand": "cd ../.. && npm i -g pnpm@10 && pnpm i --no-frozen-lockfile",
-  "buildCommand": "cd ../.. && pnpm --filter @sme-financial-os/db exec prisma generate && pnpm turbo run build --filter=@sme-financial-os/web"
-}
