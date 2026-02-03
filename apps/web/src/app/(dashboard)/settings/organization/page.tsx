@@ -23,7 +23,7 @@ import { trpc } from '@/lib/trpc';
 import { useAuth } from '@/lib/auth-context';
 
 const organizationSchema = z.object({
-  name: z.string().min(1, 'Company name is required'),
+  name: z.string().min(1, 'Název společnosti je povinný'),
   taxId: z.string().optional(),
   vatId: z.string().optional(),
   street: z.string().optional(),
@@ -31,7 +31,7 @@ const organizationSchema = z.object({
   zip: z.string().optional(),
   country: z.enum(['CZ', 'PL', 'SK', 'DE', 'AT']),
   currency: z.enum(['CZK', 'PLN', 'EUR']),
-  invoicePrefix: z.string().min(1, 'Invoice prefix is required').max(10),
+  invoicePrefix: z.string().min(1, 'Prefix faktury je povinný').max(10),
 });
 
 type OrganizationFormData = z.infer<typeof organizationSchema>;
@@ -118,12 +118,12 @@ export default function OrganizationSettingsPage() {
 
   return (
     <div className="flex flex-col">
-      <Header title="Organization Settings">
+      <Header title="Nastavení organizace">
         <div className="flex items-center gap-2">
           <Button variant="outline" asChild>
             <Link href="/settings">
               <ArrowLeft className="mr-2 h-4 w-4" />
-              Back
+              Zpět
             </Link>
           </Button>
           <Button
@@ -131,7 +131,7 @@ export default function OrganizationSettingsPage() {
             disabled={updateMutation.isPending || !isDirty}
           >
             <Save className="mr-2 h-4 w-4" />
-            {updateMutation.isPending ? 'Saving...' : 'Save Changes'}
+            {updateMutation.isPending ? 'Ukládání...' : 'Uložit změny'}
           </Button>
         </div>
       </Header>
@@ -146,18 +146,18 @@ export default function OrganizationSettingsPage() {
                   <Building2 className="h-5 w-5 text-primary" />
                 </div>
                 <div>
-                  <CardTitle>Company Details</CardTitle>
-                  <CardDescription>Basic information about your company</CardDescription>
+                  <CardTitle>Detaily společnosti</CardTitle>
+                  <CardDescription>Základní informace o vaší společnosti</CardDescription>
                 </div>
               </div>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="name">Company Name *</Label>
+                <Label htmlFor="name">Název společnosti *</Label>
                 <Input
                   id="name"
                   {...register('name')}
-                  placeholder="Your Company s.r.o."
+                  placeholder="Vaše společnost s.r.o."
                 />
                 {errors.name && (
                   <p className="text-sm text-destructive">{errors.name.message}</p>
@@ -167,7 +167,7 @@ export default function OrganizationSettingsPage() {
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="taxId">
-                    {country === 'PL' ? 'NIP' : 'IČO'} (Tax ID)
+                    {country === 'PL' ? 'NIP' : 'IČO'}
                   </Label>
                   <Input
                     id="taxId"
@@ -177,7 +177,7 @@ export default function OrganizationSettingsPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="vatId">DIČ / VAT ID</Label>
+                  <Label htmlFor="vatId">DIČ</Label>
                   <Input
                     id="vatId"
                     {...register('vatId')}
@@ -190,7 +190,7 @@ export default function OrganizationSettingsPage() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label>Country</Label>
+                  <Label>Země</Label>
                   <Select
                     value={country}
                     onValueChange={(value) => setValue('country', value as 'CZ' | 'PL' | 'SK' | 'DE' | 'AT')}
@@ -199,17 +199,17 @@ export default function OrganizationSettingsPage() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="CZ">Czech Republic</SelectItem>
-                      <SelectItem value="PL">Poland</SelectItem>
-                      <SelectItem value="SK">Slovakia</SelectItem>
-                      <SelectItem value="DE">Germany</SelectItem>
-                      <SelectItem value="AT">Austria</SelectItem>
+                      <SelectItem value="CZ">Česká republika</SelectItem>
+                      <SelectItem value="PL">Polsko</SelectItem>
+                      <SelectItem value="SK">Slovensko</SelectItem>
+                      <SelectItem value="DE">Německo</SelectItem>
+                      <SelectItem value="AT">Rakousko</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
 
                 <div className="space-y-2">
-                  <Label>Currency</Label>
+                  <Label>Měna</Label>
                   <Select
                     value={watch('currency')}
                     onValueChange={(value) => setValue('currency', value as 'CZK' | 'PLN' | 'EUR')}
@@ -218,8 +218,8 @@ export default function OrganizationSettingsPage() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="CZK">CZK - Czech Koruna</SelectItem>
-                      <SelectItem value="PLN">PLN - Polish Zloty</SelectItem>
+                      <SelectItem value="CZK">CZK - Česká koruna</SelectItem>
+                      <SelectItem value="PLN">PLN - Polský zlotý</SelectItem>
                       <SelectItem value="EUR">EUR - Euro</SelectItem>
                     </SelectContent>
                   </Select>
@@ -231,12 +231,12 @@ export default function OrganizationSettingsPage() {
           {/* Address */}
           <Card>
             <CardHeader>
-              <CardTitle>Address</CardTitle>
-              <CardDescription>Your company's registered address</CardDescription>
+              <CardTitle>Adresa</CardTitle>
+              <CardDescription>Sídlo vaší společnosti</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="street">Street Address</Label>
+                <Label htmlFor="street">Ulice a číslo popisné</Label>
                 <Input
                   id="street"
                   {...register('street')}
@@ -246,16 +246,16 @@ export default function OrganizationSettingsPage() {
 
               <div className="grid grid-cols-3 gap-4">
                 <div className="col-span-2 space-y-2">
-                  <Label htmlFor="city">City</Label>
+                  <Label htmlFor="city">Město</Label>
                   <Input
                     id="city"
                     {...register('city')}
-                    placeholder={country === 'PL' ? 'Warszawa' : 'Praha'}
+                    placeholder={country === 'PL' ? 'Varšava' : 'Praha'}
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="zip">ZIP Code</Label>
+                  <Label htmlFor="zip">PSČ</Label>
                   <Input
                     id="zip"
                     {...register('zip')}
@@ -269,12 +269,12 @@ export default function OrganizationSettingsPage() {
           {/* Invoice Settings */}
           <Card>
             <CardHeader>
-              <CardTitle>Invoice Settings</CardTitle>
-              <CardDescription>Configure default invoice settings</CardDescription>
+              <CardTitle>Nastavení faktur</CardTitle>
+              <CardDescription>Konfigurace výchozího nastavení faktur</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="invoicePrefix">Invoice Prefix *</Label>
+                <Label htmlFor="invoicePrefix">Prefix faktury *</Label>
                 <Input
                   id="invoicePrefix"
                   {...register('invoicePrefix')}
@@ -284,7 +284,7 @@ export default function OrganizationSettingsPage() {
                   <p className="text-sm text-destructive">{errors.invoicePrefix.message}</p>
                 )}
                 <p className="text-xs text-muted-foreground">
-                  Example: {watch('invoicePrefix') || 'INV'}-2026-0001
+                  Příklad: {watch('invoicePrefix') || 'INV'}-2026-0001
                 </p>
               </div>
             </CardContent>
@@ -293,7 +293,7 @@ export default function OrganizationSettingsPage() {
           {/* Success message */}
           {updateMutation.isSuccess && (
             <div className="rounded-lg border border-green-200 bg-green-50 p-4 text-green-800">
-              Organization settings saved successfully.
+              Nastavení organizace bylo úspěšně uloženo.
             </div>
           )}
 

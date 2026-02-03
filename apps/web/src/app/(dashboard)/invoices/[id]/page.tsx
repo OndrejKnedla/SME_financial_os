@@ -44,21 +44,21 @@ import { useAuth } from '@/lib/auth-context';
 import { formatCurrency, formatDate } from '@/lib/utils';
 
 const statusConfig: Record<string, { label: string; variant: 'default' | 'secondary' | 'destructive' | 'outline' | 'success' | 'warning' }> = {
-  DRAFT: { label: 'Draft', variant: 'secondary' },
-  SENT: { label: 'Sent', variant: 'default' },
-  VIEWED: { label: 'Viewed', variant: 'default' },
-  PAID: { label: 'Paid', variant: 'success' },
-  PARTIALLY_PAID: { label: 'Partial', variant: 'warning' },
-  OVERDUE: { label: 'Overdue', variant: 'destructive' },
-  CANCELLED: { label: 'Cancelled', variant: 'outline' },
+  DRAFT: { label: 'Koncept', variant: 'secondary' },
+  SENT: { label: 'Odesláno', variant: 'default' },
+  VIEWED: { label: 'Zobrazeno', variant: 'default' },
+  PAID: { label: 'Zaplaceno', variant: 'success' },
+  PARTIALLY_PAID: { label: 'Částečně', variant: 'warning' },
+  OVERDUE: { label: 'Po splatnosti', variant: 'destructive' },
+  CANCELLED: { label: 'Zrušeno', variant: 'outline' },
 };
 
 const ksefStatusConfig: Record<string, { label: string; icon: typeof CheckCircle2; color: string }> = {
-  PENDING: { label: 'Pending', icon: Clock, color: 'text-yellow-600' },
-  SUBMITTED: { label: 'Submitted', icon: Loader2, color: 'text-blue-600' },
-  ACCEPTED: { label: 'Accepted', icon: CheckCircle2, color: 'text-green-600' },
-  REJECTED: { label: 'Rejected', icon: XCircle, color: 'text-red-600' },
-  ERROR: { label: 'Error', icon: AlertCircle, color: 'text-red-600' },
+  PENDING: { label: 'Čeká', icon: Clock, color: 'text-yellow-600' },
+  SUBMITTED: { label: 'Odesláno', icon: Loader2, color: 'text-blue-600' },
+  ACCEPTED: { label: 'Přijato', icon: CheckCircle2, color: 'text-green-600' },
+  REJECTED: { label: 'Zamítnuto', icon: XCircle, color: 'text-red-600' },
+  ERROR: { label: 'Chyba', icon: AlertCircle, color: 'text-red-600' },
 };
 
 export default function InvoiceDetailPage() {
@@ -97,10 +97,10 @@ export default function InvoiceDetailPage() {
     onSuccess: () => {
       refetch();
       refetchKsefStatus();
-      alert('Invoice submitted to KSeF successfully!');
+      alert('Faktura úspěšně odeslána do KSeF!');
     },
     onError: (error) => {
-      alert(`KSeF submission failed: ${error.message}`);
+      alert(`Odeslání do KSeF selhalo: ${error.message}`);
     },
   });
 
@@ -115,25 +115,25 @@ export default function InvoiceDetailPage() {
   if (!invoice) {
     return (
       <div className="flex h-screen flex-col items-center justify-center gap-4">
-        <p className="text-muted-foreground">Invoice not found</p>
+        <p className="text-muted-foreground">Faktura nenalezena</p>
         <Button asChild variant="outline">
           <Link href="/invoices">
             <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Invoices
+            Zpět na faktury
           </Link>
         </Button>
       </div>
     );
   }
 
-  const status = statusConfig[invoice.status] || { label: 'Draft', variant: 'secondary' as const };
+  const status = statusConfig[invoice.status] || { label: 'Koncept', variant: 'secondary' as const };
   const isOverdue =
     invoice.status !== 'PAID' &&
     invoice.status !== 'CANCELLED' &&
     new Date(invoice.dueDate) < new Date();
 
   const handleDelete = () => {
-    if (confirm('Are you sure you want to delete this invoice?')) {
+    if (confirm('Opravdu chcete smazat tuto fakturu?')) {
       deleteMutation.mutate({ id: invoiceId });
     }
   };
@@ -151,32 +151,32 @@ export default function InvoiceDetailPage() {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to generate PDF');
+        throw new Error('Generování PDF selhalo');
       }
 
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `${invoice?.number ?? 'invoice'}.pdf`;
+      a.download = `${invoice?.number ?? 'faktura'}.pdf`;
       document.body.appendChild(a);
       a.click();
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
     } catch (error) {
-      console.error('PDF download error:', error);
-      alert('Failed to download PDF');
+      console.error('Chyba stahování PDF:', error);
+      alert('Stažení PDF selhalo');
     }
   };
 
   return (
     <div className="flex flex-col">
-      <Header title={`Invoice ${invoice.number}`}>
+      <Header title={`Faktura ${invoice.number}`}>
         <div className="flex items-center gap-2">
           <Button variant="outline" asChild>
             <Link href="/invoices">
               <ArrowLeft className="mr-2 h-4 w-4" />
-              Back
+              Zpět
             </Link>
           </Button>
 
@@ -184,7 +184,7 @@ export default function InvoiceDetailPage() {
             <DropdownMenuTrigger asChild>
               <Button variant="outline">
                 <MoreHorizontal className="mr-2 h-4 w-4" />
-                Actions
+                Akce
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
@@ -193,22 +193,22 @@ export default function InvoiceDetailPage() {
                   <DropdownMenuItem asChild>
                     <Link href={`/invoices/${invoice.id}/edit`}>
                       <Pencil className="mr-2 h-4 w-4" />
-                      Edit
+                      Upravit
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => markSentMutation.mutate({ id: invoiceId })}>
                     <Send className="mr-2 h-4 w-4" />
-                    Mark as Sent
+                    Označit jako odesláno
                   </DropdownMenuItem>
                 </>
               )}
               <DropdownMenuItem onClick={() => duplicateMutation.mutate({ id: invoiceId })}>
                 <Copy className="mr-2 h-4 w-4" />
-                Duplicate
+                Duplikovat
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => handleDownloadPdf()}>
                 <Download className="mr-2 h-4 w-4" />
-                Download PDF
+                Stáhnout PDF
               </DropdownMenuItem>
               {/* KSeF Submit - Only for Polish orgs with KSeF enabled */}
               {ksefSettings?.enabled &&
@@ -220,20 +220,20 @@ export default function InvoiceDetailPage() {
                   disabled={submitToKsefMutation.isPending}
                 >
                   <FileCode2 className="mr-2 h-4 w-4" />
-                  {submitToKsefMutation.isPending ? 'Submitting...' : 'Submit to KSeF'}
+                  {submitToKsefMutation.isPending ? 'Odesílání...' : 'Odeslat do KSeF'}
                 </DropdownMenuItem>
               )}
               {invoice.status !== 'PAID' && invoice.status !== 'CANCELLED' && (
                 <DropdownMenuItem onClick={() => markPaidMutation.mutate({ id: invoiceId })}>
                   <CheckCircle className="mr-2 h-4 w-4" />
-                  Mark as Paid
+                  Označit jako zaplaceno
                 </DropdownMenuItem>
               )}
               <DropdownMenuSeparator />
               {invoice.status !== 'PAID' && (
                 <DropdownMenuItem onClick={handleDelete} className="text-destructive">
                   <Trash2 className="mr-2 h-4 w-4" />
-                  Delete
+                  Smazat
                 </DropdownMenuItem>
               )}
             </DropdownMenuContent>
@@ -251,7 +251,7 @@ export default function InvoiceDetailPage() {
                 className="text-sm px-3 py-1"
               >
                 {isOverdue && invoice.status !== 'PAID' && invoice.status !== 'CANCELLED'
-                  ? 'Overdue'
+                  ? 'Po splatnosti'
                   : status.label}
               </Badge>
               {invoice.variableSymbol && (
@@ -262,7 +262,7 @@ export default function InvoiceDetailPage() {
             </div>
             <div className="text-right">
               <div className="text-2xl font-bold">{formatCurrency(invoice.total, currency)}</div>
-              <div className="text-sm text-muted-foreground">Total Amount</div>
+              <div className="text-sm text-muted-foreground">Celková částka</div>
             </div>
           </div>
 
@@ -271,7 +271,7 @@ export default function InvoiceDetailPage() {
             {/* From/To */}
             <Card>
               <CardHeader>
-                <CardTitle className="text-sm font-medium text-muted-foreground">From</CardTitle>
+                <CardTitle className="text-sm font-medium text-muted-foreground">Od</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="flex items-start gap-3">
@@ -279,7 +279,7 @@ export default function InvoiceDetailPage() {
                     <Building2 className="h-5 w-5 text-primary" />
                   </div>
                   <div>
-                    <p className="font-medium">{currentOrganization?.name ?? 'Your Company'}</p>
+                    <p className="font-medium">{currentOrganization?.name ?? 'Vaše společnost'}</p>
                     <p className="text-sm text-muted-foreground">
                       {currentOrganization?.country}
                     </p>
@@ -290,7 +290,7 @@ export default function InvoiceDetailPage() {
 
             <Card>
               <CardHeader>
-                <CardTitle className="text-sm font-medium text-muted-foreground">To</CardTitle>
+                <CardTitle className="text-sm font-medium text-muted-foreground">Pro</CardTitle>
               </CardHeader>
               <CardContent>
                 {invoice.contact ? (
@@ -306,7 +306,7 @@ export default function InvoiceDetailPage() {
                     )}
                   </div>
                 ) : (
-                  <p className="text-muted-foreground">No customer selected</p>
+                  <p className="text-muted-foreground">Zákazník nevybrán</p>
                 )}
               </CardContent>
             </Card>
@@ -317,18 +317,18 @@ export default function InvoiceDetailPage() {
             <CardContent className="pt-6">
               <div className="grid gap-4 sm:grid-cols-3">
                 <div>
-                  <p className="text-sm text-muted-foreground">Issue Date</p>
+                  <p className="text-sm text-muted-foreground">Datum vystavení</p>
                   <p className="font-medium">{formatDate(invoice.issueDate)}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Due Date</p>
+                  <p className="text-sm text-muted-foreground">Datum splatnosti</p>
                   <p className={`font-medium ${isOverdue ? 'text-destructive' : ''}`}>
                     {formatDate(invoice.dueDate)}
                   </p>
                 </div>
                 {invoice.paidAt && (
                   <div>
-                    <p className="text-sm text-muted-foreground">Paid Date</p>
+                    <p className="text-sm text-muted-foreground">Datum zaplacení</p>
                     <p className="font-medium">{formatDate(invoice.paidAt)}</p>
                   </div>
                 )}
@@ -339,18 +339,18 @@ export default function InvoiceDetailPage() {
           {/* Line Items */}
           <Card>
             <CardHeader>
-              <CardTitle>Items</CardTitle>
+              <CardTitle>Položky</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="rounded-md border">
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Description</TableHead>
-                      <TableHead className="text-right">Qty</TableHead>
-                      <TableHead className="text-right">Unit Price</TableHead>
-                      <TableHead className="text-right">VAT</TableHead>
-                      <TableHead className="text-right">Total</TableHead>
+                      <TableHead>Popis</TableHead>
+                      <TableHead className="text-right">Množství</TableHead>
+                      <TableHead className="text-right">Jednotková cena</TableHead>
+                      <TableHead className="text-right">DPH</TableHead>
+                      <TableHead className="text-right">Celkem</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -375,16 +375,16 @@ export default function InvoiceDetailPage() {
               <div className="mt-4 flex justify-end">
                 <div className="w-64 space-y-2">
                   <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Subtotal</span>
+                    <span className="text-muted-foreground">Mezisoučet</span>
                     <span>{formatCurrency(invoice.subtotal, currency)}</span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">VAT</span>
+                    <span className="text-muted-foreground">DPH</span>
                     <span>{formatCurrency(invoice.taxAmount, currency)}</span>
                   </div>
                   <Separator />
                   <div className="flex justify-between font-semibold">
-                    <span>Total</span>
+                    <span>Celkem</span>
                     <span>{formatCurrency(invoice.total, currency)}</span>
                   </div>
                 </div>
@@ -396,7 +396,7 @@ export default function InvoiceDetailPage() {
           {invoice.notes && (
             <Card>
               <CardHeader>
-                <CardTitle>Notes</CardTitle>
+                <CardTitle>Poznámky</CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-muted-foreground whitespace-pre-wrap">
@@ -410,7 +410,7 @@ export default function InvoiceDetailPage() {
           {invoice.payments.length > 0 && (
             <Card>
               <CardHeader>
-                <CardTitle>Payment History</CardTitle>
+                <CardTitle>Historie plateb</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
@@ -425,7 +425,7 @@ export default function InvoiceDetailPage() {
                           {formatDate(payment.paidAt)} · {payment.method.replace('_', ' ')}
                         </p>
                       </div>
-                      <Badge variant="success">Paid</Badge>
+                      <Badge variant="success">Zaplaceno</Badge>
                     </div>
                   ))}
                 </div>
@@ -439,7 +439,7 @@ export default function InvoiceDetailPage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <FileCode2 className="h-5 w-5" />
-                  KSeF Status
+                  Stav KSeF
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -471,7 +471,7 @@ export default function InvoiceDetailPage() {
                       </div>
                       {ksefStatus.status === 'ACCEPTED' && (
                         <Badge variant="outline" className="text-green-600 border-green-200 bg-green-50">
-                          Registered
+                          Registrováno
                         </Badge>
                       )}
                     </div>
@@ -485,12 +485,12 @@ export default function InvoiceDetailPage() {
                         {submitToKsefMutation.isPending ? (
                           <>
                             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                            Resubmitting...
+                            Odesílání znovu...
                           </>
                         ) : (
                           <>
                             <FileCode2 className="mr-2 h-4 w-4" />
-                            Retry Submission
+                            Zkusit znovu
                           </>
                         )}
                       </Button>
@@ -499,7 +499,7 @@ export default function InvoiceDetailPage() {
                 ) : (
                   <div className="text-center py-4">
                     <p className="text-muted-foreground text-sm mb-3">
-                      This invoice has not been submitted to KSeF yet.
+                      Tato faktura ještě nebyla odeslána do KSeF.
                     </p>
                     {invoice.status !== 'DRAFT' && (
                       <Button
@@ -510,19 +510,19 @@ export default function InvoiceDetailPage() {
                         {submitToKsefMutation.isPending ? (
                           <>
                             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                            Submitting...
+                            Odesílání...
                           </>
                         ) : (
                           <>
                             <FileCode2 className="mr-2 h-4 w-4" />
-                            Submit to KSeF
+                            Odeslat do KSeF
                           </>
                         )}
                       </Button>
                     )}
                     {invoice.status === 'DRAFT' && (
                       <p className="text-xs text-muted-foreground mt-2">
-                        Invoice must be sent before submitting to KSeF.
+                        Faktura musí být odeslána před odesláním do KSeF.
                       </p>
                     )}
                   </div>

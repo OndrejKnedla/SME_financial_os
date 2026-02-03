@@ -21,7 +21,7 @@ export default function LoginPage() {
     onSuccess: async (data) => {
       login(data.token, data.user);
       await refreshUser();
-      router.push('/');
+      router.push('/dashboard');
     },
     onError: (err) => {
       setError(err.message);
@@ -38,8 +38,8 @@ export default function LoginPage() {
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-b from-primary/5 to-background p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1 text-center">
-          <CardTitle className="text-2xl font-bold">Welcome back</CardTitle>
-          <CardDescription>Sign in to your account to continue</CardDescription>
+          <CardTitle className="text-2xl font-bold">Vítejte zpět</CardTitle>
+          <CardDescription>Přihlaste se ke svému účtu</CardDescription>
         </CardHeader>
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">
@@ -49,22 +49,22 @@ export default function LoginPage() {
               </div>
             )}
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">E-mail</Label>
               <Input
                 id="email"
                 type="email"
-                placeholder="you@example.com"
+                placeholder="vas@email.cz"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password">Heslo</Label>
               <Input
                 id="password"
                 type="password"
-                placeholder="Enter your password"
+                placeholder="Zadejte heslo"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
@@ -77,12 +77,12 @@ export default function LoginPage() {
               className="w-full"
               disabled={loginMutation.isPending}
             >
-              {loginMutation.isPending ? 'Signing in...' : 'Sign in'}
+              {loginMutation.isPending ? 'Přihlašování...' : 'Přihlásit se'}
             </Button>
             <p className="text-center text-sm text-muted-foreground">
-              Don&apos;t have an account?{' '}
+              Nemáte účet?{' '}
               <Link href="/register" className="text-primary hover:underline">
-                Sign up
+                Zaregistrujte se
               </Link>
             </p>
           </CardFooter>

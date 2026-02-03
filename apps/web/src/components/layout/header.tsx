@@ -18,7 +18,7 @@ export function Header({ title, children }: HeaderProps) {
         <SheetTrigger asChild>
           <Button variant="ghost" size="icon" className="md:hidden">
             <Menu className="h-5 w-5" />
-            <span className="sr-only">Toggle menu</span>
+            <span className="sr-only">Přepnout menu</span>
           </Button>
         </SheetTrigger>
         <SheetContent side="left" className="w-64 p-0">

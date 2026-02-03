@@ -47,10 +47,10 @@ import { ReceiptUploadDialog } from '@/components/expenses/receipt-upload-dialog
 import type { ExpenseStatus } from '@sme-financial-os/shared';
 
 const statusConfig: Record<string, { label: string; variant: 'default' | 'secondary' | 'destructive' | 'outline' | 'success' | 'warning' }> = {
-  PENDING: { label: 'Pending', variant: 'secondary' },
-  APPROVED: { label: 'Approved', variant: 'default' },
-  REJECTED: { label: 'Rejected', variant: 'destructive' },
-  PAID: { label: 'Paid', variant: 'success' },
+  PENDING: { label: 'Čeká na schválení', variant: 'secondary' },
+  APPROVED: { label: 'Schváleno', variant: 'default' },
+  REJECTED: { label: 'Zamítnuto', variant: 'destructive' },
+  PAID: { label: 'Zaplaceno', variant: 'success' },
 };
 
 export default function ExpensesPage() {
@@ -88,7 +88,7 @@ export default function ExpensesPage() {
   };
 
   const handleDelete = (expenseId: string) => {
-    if (confirm('Are you sure you want to delete this expense?')) {
+    if (confirm('Opravdu chcete smazat tento náklad?')) {
       deleteMutation.mutate({ id: expenseId });
     }
   };
@@ -101,15 +101,15 @@ export default function ExpensesPage() {
 
   return (
     <div className="flex flex-col">
-      <Header title="Expenses">
+      <Header title="Náklady">
         <div className="flex gap-2">
           <Button variant="outline" onClick={() => setIsUploadDialogOpen(true)}>
             <Camera className="mr-2 h-4 w-4" />
-            Scan Receipt
+            Naskenovat účtenku
           </Button>
           <Button onClick={() => setIsDialogOpen(true)}>
             <Plus className="mr-2 h-4 w-4" />
-            Add Expense
+            Přidat náklad
           </Button>
         </div>
       </Header>
@@ -120,7 +120,7 @@ export default function ExpensesPage() {
           <div className="relative flex-1 max-w-sm">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
-              placeholder="Search expenses..."
+              placeholder="Hledat náklady..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="pl-9"
@@ -128,14 +128,14 @@ export default function ExpensesPage() {
           </div>
           <Select value={statusFilter} onValueChange={setStatusFilter}>
             <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Filter by status" />
+              <SelectValue placeholder="Filtr podle stavu" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Statuses</SelectItem>
-              <SelectItem value="PENDING">Pending</SelectItem>
-              <SelectItem value="APPROVED">Approved</SelectItem>
-              <SelectItem value="PAID">Paid</SelectItem>
-              <SelectItem value="REJECTED">Rejected</SelectItem>
+              <SelectItem value="all">Všechny stavy</SelectItem>
+              <SelectItem value="PENDING">Čeká na schválení</SelectItem>
+              <SelectItem value="APPROVED">Schváleno</SelectItem>
+              <SelectItem value="PAID">Zaplaceno</SelectItem>
+              <SelectItem value="REJECTED">Zamítnuto</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -147,15 +147,15 @@ export default function ExpensesPage() {
               <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-muted">
                 <Receipt className="h-6 w-6 text-muted-foreground" />
               </div>
-              <CardTitle>No expenses yet</CardTitle>
+              <CardTitle>Zatím žádné náklady</CardTitle>
               <CardDescription>
-                Track your business expenses by adding receipts
+                Sledujte své podnikatelské náklady přidáním účtenek
               </CardDescription>
             </CardHeader>
             <CardContent className="text-center">
               <Button onClick={() => setIsDialogOpen(true)}>
                 <Plus className="mr-2 h-4 w-4" />
-                Add Expense
+                Přidat náklad
               </Button>
             </CardContent>
           </Card>
@@ -164,7 +164,7 @@ export default function ExpensesPage() {
         {/* No results */}
         {!isLoading && expenses.length === 0 && (search || statusFilter !== 'all') && (
           <div className="text-center py-12">
-            <p className="text-muted-foreground">No expenses found matching your filters</p>
+            <p className="text-muted-foreground">Nebyly nalezeny žádné náklady odpovídající vašim filtrům</p>
           </div>
         )}
 
@@ -174,18 +174,18 @@ export default function ExpensesPage() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Date</TableHead>
-                  <TableHead>Vendor</TableHead>
-                  <TableHead>Description</TableHead>
-                  <TableHead>Category</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="text-right">Amount</TableHead>
+                  <TableHead>Datum</TableHead>
+                  <TableHead>Dodavatel</TableHead>
+                  <TableHead>Popis</TableHead>
+                  <TableHead>Kategorie</TableHead>
+                  <TableHead>Stav</TableHead>
+                  <TableHead className="text-right">Částka</TableHead>
                   <TableHead className="w-[50px]"></TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {expenses.map((expense: typeof expenses[number]) => {
-                  const status = statusConfig[expense.status] || { label: 'Pending', variant: 'secondary' as const };
+                  const status = statusConfig[expense.status] || { label: 'Čeká na schválení', variant: 'secondary' as const };
 
                   return (
                     <TableRow key={expense.id}>
@@ -213,14 +213,14 @@ export default function ExpensesPage() {
                           <DropdownMenuContent align="end">
                             <DropdownMenuItem onClick={() => handleEdit(expense.id)}>
                               <Pencil className="mr-2 h-4 w-4" />
-                              Edit
+                              Upravit
                             </DropdownMenuItem>
                             {expense.status === 'PENDING' && (
                               <DropdownMenuItem
                                 onClick={() => approveMutation.mutate({ id: expense.id })}
                               >
                                 <CheckCircle className="mr-2 h-4 w-4" />
-                                Approve
+                                Schválit
                               </DropdownMenuItem>
                             )}
                             {expense.status === 'APPROVED' && (
@@ -228,7 +228,7 @@ export default function ExpensesPage() {
                                 onClick={() => markPaidMutation.mutate({ id: expense.id })}
                               >
                                 <DollarSign className="mr-2 h-4 w-4" />
-                                Mark as Paid
+                                Označit jako zaplaceno
                               </DropdownMenuItem>
                             )}
                             <DropdownMenuSeparator />
@@ -237,7 +237,7 @@ export default function ExpensesPage() {
                               className="text-destructive"
                             >
                               <Trash2 className="mr-2 h-4 w-4" />
-                              Delete
+                              Smazat
                             </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>

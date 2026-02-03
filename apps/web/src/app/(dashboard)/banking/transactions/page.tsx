@@ -58,10 +58,10 @@ export default function TransactionsPage() {
   const autoMatchMutation = trpc.bankAccount.autoMatchTransactions.useMutation({
     onSuccess: (result) => {
       refetch();
-      alert(`Auto-matched ${result.matchedCount} transactions.`);
+      alert(`Automaticky spárováno ${result.matchedCount} transakcí.`);
     },
     onError: (error) => {
-      alert(`Auto-match failed: ${error.message}`);
+      alert(`Automatické párování selhalo: ${error.message}`);
     },
   });
 
@@ -87,7 +87,7 @@ export default function TransactionsPage() {
 
   return (
     <div className="flex flex-col">
-      <Header title="Transactions">
+      <Header title="Transakce">
         <div className="flex gap-2">
           <Button
             variant="outline"
@@ -95,11 +95,11 @@ export default function TransactionsPage() {
             disabled={autoMatchMutation.isPending}
           >
             <Sparkles className={`mr-2 h-4 w-4 ${autoMatchMutation.isPending ? 'animate-pulse' : ''}`} />
-            {autoMatchMutation.isPending ? 'Matching...' : 'Auto-Match All'}
+            {autoMatchMutation.isPending ? 'Páruji...' : 'Automaticky spárovat vše'}
           </Button>
           <Button variant="outline" onClick={() => refetch()}>
             <RefreshCw className="mr-2 h-4 w-4" />
-            Refresh
+            Obnovit
           </Button>
         </div>
       </Header>
@@ -112,9 +112,9 @@ export default function TransactionsPage() {
               <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-muted">
                 <Link2 className="h-6 w-6 text-muted-foreground" />
               </div>
-              <CardTitle>No unmatched transactions</CardTitle>
+              <CardTitle>Žádné nespárované transakce</CardTitle>
               <CardDescription>
-                All incoming transactions have been matched to invoices, or no transactions have been synced yet.
+                Všechny příchozí transakce byly spárovány s fakturami, nebo nebyly zatím synchronizovány žádné transakce.
               </CardDescription>
             </CardHeader>
           </Card>
@@ -124,21 +124,21 @@ export default function TransactionsPage() {
         {transactions && transactions.length > 0 && (
           <Card>
             <CardHeader>
-              <CardTitle>Unmatched Transactions</CardTitle>
+              <CardTitle>Nespárované transakce</CardTitle>
               <CardDescription>
-                {transactions.length} incoming transactions waiting to be matched to invoices
+                {transactions.length} příchozích transakcí čeká na spárování s fakturami
               </CardDescription>
             </CardHeader>
             <CardContent>
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Date</TableHead>
-                    <TableHead>Account</TableHead>
-                    <TableHead>Counterparty</TableHead>
-                    <TableHead>Description</TableHead>
-                    <TableHead>Variable Symbol</TableHead>
-                    <TableHead className="text-right">Amount</TableHead>
+                    <TableHead>Datum</TableHead>
+                    <TableHead>Účet</TableHead>
+                    <TableHead>Protistrana</TableHead>
+                    <TableHead>Popis</TableHead>
+                    <TableHead>Variabilní symbol</TableHead>
+                    <TableHead className="text-right">Částka</TableHead>
                     <TableHead className="w-[80px]"></TableHead>
                   </TableRow>
                 </TableHeader>
@@ -156,7 +156,7 @@ export default function TransactionsPage() {
                       </TableCell>
                       <TableCell>
                         {tx.counterpartyName || (
-                          <span className="text-muted-foreground">Unknown</span>
+                          <span className="text-muted-foreground">Neznámý</span>
                         )}
                       </TableCell>
                       <TableCell className="max-w-[200px] truncate">
@@ -189,7 +189,7 @@ export default function TransactionsPage() {
                           <DropdownMenuContent align="end">
                             <DropdownMenuItem onClick={() => handleMatchClick(tx)}>
                               <Link2 className="mr-2 h-4 w-4" />
-                              Match to Invoice
+                              Spárovat s fakturou
                             </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>

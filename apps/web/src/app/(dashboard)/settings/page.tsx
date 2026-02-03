@@ -7,44 +7,44 @@ import Link from 'next/link';
 
 const settingsSections = [
   {
-    title: 'Organization',
-    description: 'Company details, address, and tax information',
+    title: 'Organizace',
+    description: 'Detaily společnosti, adresa a daňové informace',
     icon: Building2,
     href: '/settings/organization',
   },
   {
-    title: 'Invoice Settings',
-    description: 'Invoice numbering, templates, and defaults',
+    title: 'Nastavení faktur',
+    description: 'Číslování faktur, šablony a výchozí hodnoty',
     icon: FileText,
     href: '/settings/invoices',
   },
   {
-    title: 'KSeF (Poland)',
-    description: 'Polish e-invoice system integration',
+    title: 'KSeF (Polsko)',
+    description: 'Integrace polského systému e-faktur',
     icon: FileCode2,
     href: '/settings/ksef',
   },
   {
-    title: 'Team',
-    description: 'Invite members and manage roles',
+    title: 'Tým',
+    description: 'Pozvání členů a správa rolí',
     icon: Users,
     href: '/settings/team',
   },
   {
-    title: 'Integrations',
-    description: 'Connected banks and services',
+    title: 'Integrace',
+    description: 'Připojené banky a služby',
     icon: LinkIcon,
     href: '/settings/integrations',
   },
   {
-    title: 'Notifications',
-    description: 'Email and alert preferences',
+    title: 'Notifikace',
+    description: 'Nastavení e-mailů a upozornění',
     icon: Bell,
     href: '/settings/notifications',
   },
   {
-    title: 'Security',
-    description: 'Password and account security',
+    title: 'Zabezpečení',
+    description: 'Heslo a zabezpečení účtu',
     icon: Shield,
     href: '/settings/security',
   },
@@ -53,7 +53,7 @@ const settingsSections = [
 export default function SettingsPage() {
   return (
     <div className="flex flex-col">
-      <Header title="Settings" />
+      <Header title="Nastavení" />
 
       <div className="flex-1 p-4 md:p-6">
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">

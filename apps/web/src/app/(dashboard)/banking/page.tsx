@@ -56,11 +56,11 @@ export default function BankingPage() {
     onSuccess: (result) => {
       setSyncingAccountId(null);
       refetch();
-      alert(`Sync complete! ${result.newTransactions} new transactions imported.`);
+      alert(`Synchronizace dokončena! Naimportováno ${result.newTransactions} nových transakcí.`);
     },
     onError: (error) => {
       setSyncingAccountId(null);
-      alert(`Sync failed: ${error.message}`);
+      alert(`Synchronizace selhala: ${error.message}`);
     },
   });
 
@@ -74,7 +74,7 @@ export default function BankingPage() {
   };
 
   const handleDelete = (accountId: string) => {
-    if (confirm('Are you sure you want to delete this bank account?')) {
+    if (confirm('Opravdu chcete smazat tento bankovní účet?')) {
       deleteMutation.mutate({ id: accountId });
     }
   };
@@ -85,7 +85,7 @@ export default function BankingPage() {
   };
 
   const handleDisconnect = (accountId: string) => {
-    if (confirm('Are you sure you want to disconnect this Fio account? Transactions will be kept.')) {
+    if (confirm('Opravdu chcete odpojit tento Fio účet? Transakce budou zachovány.')) {
       disconnectFioMutation.mutate({ id: accountId });
     }
   };
@@ -103,21 +103,21 @@ export default function BankingPage() {
 
   return (
     <div className="flex flex-col">
-      <Header title="Banking">
+      <Header title="Bankovnictví">
         <div className="flex gap-2">
           <Button variant="outline" asChild>
             <Link href="/banking/transactions">
               <ArrowRightLeft className="mr-2 h-4 w-4" />
-              Transactions
+              Transakce
             </Link>
           </Button>
           <Button variant="outline" onClick={() => setIsFioDialogOpen(true)}>
             <Link2 className="mr-2 h-4 w-4" />
-            Connect Fio
+            Připojit Fio
           </Button>
           <Button onClick={() => setIsDialogOpen(true)}>
             <Plus className="mr-2 h-4 w-4" />
-            Add Manual
+            Přidat ručně
           </Button>
         </div>
       </Header>
@@ -130,15 +130,15 @@ export default function BankingPage() {
               <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-muted">
                 <Building2 className="h-6 w-6 text-muted-foreground" />
               </div>
-              <CardTitle>No bank accounts yet</CardTitle>
+              <CardTitle>Zatím žádné bankovní účty</CardTitle>
               <CardDescription>
-                Add your bank account to track payments and include details on invoices
+                Přidejte bankovní účet pro sledování plateb a zahrnutí detailů na fakturách
               </CardDescription>
             </CardHeader>
             <CardContent className="text-center">
               <Button onClick={() => setIsDialogOpen(true)}>
                 <Plus className="mr-2 h-4 w-4" />
-                Add Bank Account
+                Přidat účet
               </Button>
             </CardContent>
           </Card>
@@ -160,7 +160,7 @@ export default function BankingPage() {
                           {account.name}
                           {account.isDefault && (
                             <Badge variant="secondary" className="text-xs">
-                              Default
+                              Výchozí
                             </Badge>
                           )}
                         </CardTitle>
@@ -176,14 +176,14 @@ export default function BankingPage() {
                       <DropdownMenuContent align="end">
                         <DropdownMenuItem onClick={() => handleEdit(account.id)}>
                           <Pencil className="mr-2 h-4 w-4" />
-                          Edit
+                          Upravit
                         </DropdownMenuItem>
                         {!account.isDefault && (
                           <DropdownMenuItem
                             onClick={() => setDefaultMutation.mutate({ id: account.id })}
                           >
                             <Star className="mr-2 h-4 w-4" />
-                            Set as Default
+                            Nastavit jako výchozí
                           </DropdownMenuItem>
                         )}
                         {account.provider === 'FIO' && account.isActive && (
@@ -193,11 +193,11 @@ export default function BankingPage() {
                               disabled={syncingAccountId === account.id}
                             >
                               <RefreshCw className={`mr-2 h-4 w-4 ${syncingAccountId === account.id ? 'animate-spin' : ''}`} />
-                              {syncingAccountId === account.id ? 'Syncing...' : 'Sync Transactions'}
+                              {syncingAccountId === account.id ? 'Synchronizuji...' : 'Synchronizovat transakce'}
                             </DropdownMenuItem>
                             <DropdownMenuItem onClick={() => handleDisconnect(account.id)}>
                               <Unlink className="mr-2 h-4 w-4" />
-                              Disconnect
+                              Odpojit
                             </DropdownMenuItem>
                           </>
                         )}
@@ -207,7 +207,7 @@ export default function BankingPage() {
                           className="text-destructive"
                         >
                           <Trash2 className="mr-2 h-4 w-4" />
-                          Delete
+                          Smazat
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
@@ -216,30 +216,30 @@ export default function BankingPage() {
                 <CardContent>
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between">
-                      <span className="text-muted-foreground">Account Number</span>
+                      <span className="text-muted-foreground">Číslo účtu</span>
                       <span className="font-mono">{account.accountNumber}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-muted-foreground">Currency</span>
+                      <span className="text-muted-foreground">Měna</span>
                       <span>{account.currency}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-muted-foreground">Provider</span>
+                      <span className="text-muted-foreground">Poskytovatel</span>
                       <Badge variant={account.provider === 'FIO' ? 'default' : 'secondary'} className="text-xs">
-                        {account.provider === 'FIO' ? 'Fio Banka' : 'Manual'}
+                        {account.provider === 'FIO' ? 'Fio Banka' : 'Ruční'}
                       </Badge>
                     </div>
                     {account.provider === 'FIO' && (
                       <div className="flex justify-between">
-                        <span className="text-muted-foreground">Status</span>
+                        <span className="text-muted-foreground">Stav</span>
                         <Badge variant={account.isActive ? 'success' : 'outline'} className="text-xs">
-                          {account.isActive ? 'Connected' : 'Disconnected'}
+                          {account.isActive ? 'Připojeno' : 'Odpojeno'}
                         </Badge>
                       </div>
                     )}
                     {account.lastSyncAt && (
                       <div className="flex justify-between">
-                        <span className="text-muted-foreground">Last Synced</span>
+                        <span className="text-muted-foreground">Poslední synchronizace</span>
                         <span className="text-xs">
                           {new Date(account.lastSyncAt).toLocaleDateString()}
                         </span>

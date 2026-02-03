@@ -21,7 +21,7 @@ import { trpc } from '@/lib/trpc';
 import { useAuth } from '@/lib/auth-context';
 
 const onboardingSchema = z.object({
-  name: z.string().min(1, 'Company name is required'),
+  name: z.string().min(1, 'Název společnosti je povinný'),
   taxId: z.string().optional(),
   vatId: z.string().optional(),
   country: z.enum(['CZ', 'PL', 'SK', 'DE', 'AT']),
@@ -31,9 +31,9 @@ const onboardingSchema = z.object({
 type OnboardingFormData = z.infer<typeof onboardingSchema>;
 
 const steps = [
-  { id: 1, title: 'Company Details', description: 'Basic information about your business' },
-  { id: 2, title: 'Location', description: 'Where is your company based?' },
-  { id: 3, title: 'Review', description: 'Confirm your setup' },
+  { id: 1, title: 'Detaily společnosti', description: 'Základní informace o vašem podnikání' },
+  { id: 2, title: 'Umístění', description: 'Kde sídlí vaše společnost?' },
+  { id: 3, title: 'Kontrola', description: 'Potvrďte vaše nastavení' },
 ];
 
 export default function OnboardingPage() {
@@ -100,9 +100,9 @@ export default function OnboardingPage() {
           <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
             <Building2 className="h-8 w-8 text-primary" />
           </div>
-          <h1 className="text-3xl font-bold">Welcome to SME Financial OS</h1>
+          <h1 className="text-3xl font-bold">Vítejte v SME Financial OS</h1>
           <p className="mt-2 text-muted-foreground">
-            Let's set up your company in a few simple steps
+            Nastavme vaši společnost v několika jednoduchých krocích
           </p>
         </div>
 
@@ -159,11 +159,11 @@ export default function OnboardingPage() {
               {currentStep === 1 && (
                 <div className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="name">Company Name *</Label>
+                    <Label htmlFor="name">Název společnosti *</Label>
                     <Input
                       id="name"
                       {...register('name')}
-                      placeholder="Your Company s.r.o."
+                      placeholder="Vaše společnost s.r.o."
                       autoFocus
                     />
                     {errors.name && (
@@ -174,7 +174,7 @@ export default function OnboardingPage() {
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="taxId">
-                        {country === 'PL' ? 'NIP' : 'IČO'} (Tax ID)
+                        {country === 'PL' ? 'NIP' : 'IČO'}
                       </Label>
                       <Input
                         id="taxId"
@@ -184,7 +184,7 @@ export default function OnboardingPage() {
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="vatId">DIČ / VAT ID</Label>
+                      <Label htmlFor="vatId">DIČ</Label>
                       <Input
                         id="vatId"
                         {...register('vatId')}
@@ -199,7 +199,7 @@ export default function OnboardingPage() {
               {currentStep === 2 && (
                 <div className="space-y-4">
                   <div className="space-y-2">
-                    <Label>Country</Label>
+                    <Label>Země</Label>
                     <Select
                       value={country}
                       onValueChange={(value) => {
@@ -218,17 +218,17 @@ export default function OnboardingPage() {
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="CZ">Czech Republic</SelectItem>
-                        <SelectItem value="PL">Poland</SelectItem>
-                        <SelectItem value="SK">Slovakia</SelectItem>
-                        <SelectItem value="DE">Germany</SelectItem>
-                        <SelectItem value="AT">Austria</SelectItem>
+                        <SelectItem value="CZ">Česká republika</SelectItem>
+                        <SelectItem value="PL">Polsko</SelectItem>
+                        <SelectItem value="SK">Slovensko</SelectItem>
+                        <SelectItem value="DE">Německo</SelectItem>
+                        <SelectItem value="AT">Rakousko</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
 
                   <div className="space-y-2">
-                    <Label>Primary Currency</Label>
+                    <Label>Hlavní měna</Label>
                     <Select
                       value={currency}
                       onValueChange={(value) => setValue('currency', value as 'CZK' | 'PLN' | 'EUR')}
@@ -237,13 +237,13 @@ export default function OnboardingPage() {
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="CZK">CZK - Czech Koruna</SelectItem>
-                        <SelectItem value="PLN">PLN - Polish Zloty</SelectItem>
+                        <SelectItem value="CZK">CZK - Česká koruna</SelectItem>
+                        <SelectItem value="PLN">PLN - Polský zlotý</SelectItem>
                         <SelectItem value="EUR">EUR - Euro</SelectItem>
                       </SelectContent>
                     </Select>
                     <p className="text-xs text-muted-foreground">
-                      This will be used as the default currency for invoices and expenses
+                      Tato měna bude použita jako výchozí pro faktury a náklady
                     </p>
                   </div>
                 </div>
@@ -254,31 +254,31 @@ export default function OnboardingPage() {
                 <div className="space-y-4">
                   <div className="rounded-lg border p-4 space-y-3">
                     <div className="flex justify-between">
-                      <span className="text-muted-foreground">Company Name</span>
+                      <span className="text-muted-foreground">Název společnosti</span>
                       <span className="font-medium">{name || '-'}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-muted-foreground">Tax ID</span>
+                      <span className="text-muted-foreground">IČO</span>
                       <span className="font-medium">{taxId || '-'}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-muted-foreground">Country</span>
+                      <span className="text-muted-foreground">Země</span>
                       <span className="font-medium">
-                        {country === 'CZ' && 'Czech Republic'}
-                        {country === 'PL' && 'Poland'}
-                        {country === 'SK' && 'Slovakia'}
-                        {country === 'DE' && 'Germany'}
-                        {country === 'AT' && 'Austria'}
+                        {country === 'CZ' && 'Česká republika'}
+                        {country === 'PL' && 'Polsko'}
+                        {country === 'SK' && 'Slovensko'}
+                        {country === 'DE' && 'Německo'}
+                        {country === 'AT' && 'Rakousko'}
                       </span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-muted-foreground">Currency</span>
+                      <span className="text-muted-foreground">Měna</span>
                       <span className="font-medium">{currency}</span>
                     </div>
                   </div>
 
                   <p className="text-sm text-muted-foreground">
-                    You can update these details later in Settings.
+                    Tyto údaje můžete později změnit v nastavení.
                   </p>
                 </div>
               )}
@@ -291,7 +291,7 @@ export default function OnboardingPage() {
                   onClick={prevStep}
                   disabled={currentStep === 1}
                 >
-                  Back
+                  Zpět
                 </Button>
 
                 {currentStep < 3 ? (
@@ -300,12 +300,12 @@ export default function OnboardingPage() {
                     onClick={nextStep}
                     disabled={currentStep === 1 && !name}
                   >
-                    Continue
+                    Pokračovat
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                 ) : (
                   <Button type="submit" disabled={createMutation.isPending}>
-                    {createMutation.isPending ? 'Creating...' : 'Create Company'}
+                    {createMutation.isPending ? 'Vytváření...' : 'Vytvořit společnost'}
                     <CheckCircle2 className="ml-2 h-4 w-4" />
                   </Button>
                 )}

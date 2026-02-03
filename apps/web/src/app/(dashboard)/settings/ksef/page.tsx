@@ -97,7 +97,7 @@ export default function KSeFSettingsPage() {
   if (isLoading) {
     return (
       <div className="flex flex-col">
-        <Header title="KSeF Settings" />
+        <Header title="Nastavení KSeF" />
         <div className="flex-1 p-4 md:p-6">
           <div className="flex justify-center py-12">
             <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
@@ -109,7 +109,7 @@ export default function KSeFSettingsPage() {
 
   return (
     <div className="flex flex-col">
-      <Header title="KSeF Settings" />
+      <Header title="Nastavení KSeF" />
 
       <div className="flex-1 p-4 md:p-6 space-y-6">
         {/* Info Card */}
@@ -117,13 +117,13 @@ export default function KSeFSettingsPage() {
           <CardHeader className="pb-2">
             <CardTitle className="text-base flex items-center gap-2 text-blue-800">
               <Info className="h-4 w-4" />
-              About KSeF
+              O systému KSeF
             </CardTitle>
           </CardHeader>
           <CardContent className="text-sm text-blue-800">
             <p>
-              <strong>KSeF (Krajowy System e-Faktur)</strong> is Poland's National e-Invoice System.
-              Starting from July 2024, all B2B invoices in Poland must be submitted through KSeF.
+              <strong>KSeF (Krajowy System e-Faktur)</strong> je polský národní systém elektronických faktur.
+              Od července 2024 musí být všechny B2B faktury v Polsku odeslány prostřednictvím KSeF.
             </p>
             <div className="mt-3 flex gap-2">
               <a
@@ -132,7 +132,7 @@ export default function KSeFSettingsPage() {
                 rel="noopener noreferrer"
                 className="text-blue-600 hover:underline inline-flex items-center gap-1"
               >
-                Learn more about KSeF
+                Více informací o KSeF
                 <ExternalLink className="h-3 w-3" />
               </a>
             </div>
@@ -145,14 +145,14 @@ export default function KSeFSettingsPage() {
             <CardHeader className="pb-2">
               <CardTitle className="text-base flex items-center gap-2 text-yellow-800">
                 <AlertCircle className="h-4 w-4" />
-                Not Available
+                Není k dispozici
               </CardTitle>
             </CardHeader>
             <CardContent className="text-sm text-yellow-800">
               <p>
-                KSeF is only available for Polish organizations. Your organization is set to{' '}
-                <strong>{settings.country}</strong>. To enable KSeF, update your organization
-                country to Poland (PL) in Organization Settings.
+                KSeF je k dispozici pouze pro polské organizace. Vaše organizace je nastavena na{' '}
+                <strong>{settings.country}</strong>. Pro aktivaci KSeF změňte zemi organizace
+                na Polsko (PL) v nastavení organizace.
               </p>
             </CardContent>
           </Card>
@@ -168,10 +168,10 @@ export default function KSeFSettingsPage() {
                   <div>
                     <CardTitle className="flex items-center gap-2">
                       <FileCode2 className="h-5 w-5" />
-                      KSeF Integration
+                      Integrace KSeF
                     </CardTitle>
                     <CardDescription>
-                      Enable automatic invoice submission to KSeF
+                      Povolit automatické odesílání faktur do KSeF
                     </CardDescription>
                   </div>
                   <div className="flex items-center gap-2">
@@ -182,7 +182,7 @@ export default function KSeFSettingsPage() {
                       className="h-5 w-5 rounded border-gray-300"
                     />
                     <Badge variant={isEnabled ? 'default' : 'secondary'}>
-                      {isEnabled ? 'Enabled' : 'Disabled'}
+                      {isEnabled ? 'Povoleno' : 'Zakázáno'}
                     </Badge>
                   </div>
                 </div>
@@ -192,29 +192,29 @@ export default function KSeFSettingsPage() {
             {/* Configuration Card */}
             <Card>
               <CardHeader>
-                <CardTitle>Configuration</CardTitle>
+                <CardTitle>Konfigurace</CardTitle>
                 <CardDescription>
-                  Configure your KSeF authorization token
+                  Nastavte váš autorizační token KSeF
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 {/* Tax ID Status */}
                 <div className="flex items-center justify-between rounded-lg border p-3">
                   <div>
-                    <div className="font-medium">NIP (Tax ID)</div>
+                    <div className="font-medium">NIP (IČO)</div>
                     <div className="text-sm text-muted-foreground">
-                      Required for KSeF authentication
+                      Vyžadováno pro autentizaci KSeF
                     </div>
                   </div>
                   {settings.hasTaxId ? (
                     <Badge variant="outline" className="text-green-600 border-green-200 bg-green-50">
                       <CheckCircle2 className="mr-1 h-3 w-3" />
-                      Configured
+                      Nastaveno
                     </Badge>
                   ) : (
                     <Badge variant="outline" className="text-red-600 border-red-200 bg-red-50">
                       <AlertCircle className="mr-1 h-3 w-3" />
-                      Missing
+                      Chybí
                     </Badge>
                   )}
                 </div>
@@ -222,20 +222,20 @@ export default function KSeFSettingsPage() {
                 {/* Token Status */}
                 <div className="flex items-center justify-between rounded-lg border p-3">
                   <div>
-                    <div className="font-medium">Authorization Token</div>
+                    <div className="font-medium">Autorizační token</div>
                     <div className="text-sm text-muted-foreground">
-                      Token from KSeF portal
+                      Token z portálu KSeF
                     </div>
                   </div>
                   {settings.hasToken ? (
                     <Badge variant="outline" className="text-green-600 border-green-200 bg-green-50">
                       <CheckCircle2 className="mr-1 h-3 w-3" />
-                      Configured
+                      Nastaveno
                     </Badge>
                   ) : (
                     <Badge variant="outline" className="text-yellow-600 border-yellow-200 bg-yellow-50">
                       <AlertCircle className="mr-1 h-3 w-3" />
-                      Not Set
+                      Nenastaveno
                     </Badge>
                   )}
                 </div>
@@ -243,26 +243,26 @@ export default function KSeFSettingsPage() {
                 {/* Token Input */}
                 <div className="space-y-2">
                   <Label htmlFor="token">
-                    {settings.hasToken ? 'Update Authorization Token' : 'Authorization Token'}
+                    {settings.hasToken ? 'Aktualizovat autorizační token' : 'Autorizační token'}
                   </Label>
                   <Input
                     id="token"
                     type="password"
-                    placeholder={settings.hasToken ? '••••••••••••••••' : 'Enter your KSeF authorization token'}
+                    placeholder={settings.hasToken ? '••••••••••••••••' : 'Zadejte váš autorizační token KSeF'}
                     {...register('token')}
                   />
                   <p className="text-xs text-muted-foreground">
-                    Generate a token in the{' '}
+                    Vygenerujte token na{' '}
                     <a
                       href="https://ksef.mf.gov.pl/"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-primary hover:underline inline-flex items-center gap-1"
                     >
-                      KSeF Portal
+                      portálu KSeF
                       <ExternalLink className="h-3 w-3" />
                     </a>
-                    {' '}(or test portal for testing).
+                    {' '}(nebo testovacím portálu pro testování).
                   </p>
                 </div>
 
@@ -271,7 +271,7 @@ export default function KSeFSettingsPage() {
                   type="submit"
                   disabled={!isDirty || updateMutation.isPending}
                 >
-                  {updateMutation.isPending ? 'Saving...' : 'Save Settings'}
+                  {updateMutation.isPending ? 'Ukládání...' : 'Uložit nastavení'}
                 </Button>
 
                 {updateMutation.error && (
@@ -282,7 +282,7 @@ export default function KSeFSettingsPage() {
 
                 {updateMutation.isSuccess && (
                   <div className="rounded-lg border border-green-200 bg-green-50 p-3 text-sm text-green-800">
-                    Settings saved successfully.
+                    Nastavení bylo úspěšně uloženo.
                   </div>
                 )}
               </CardContent>
@@ -291,9 +291,9 @@ export default function KSeFSettingsPage() {
             {/* Test Connection Card */}
             <Card>
               <CardHeader>
-                <CardTitle>Test Connection</CardTitle>
+                <CardTitle>Test připojení</CardTitle>
                 <CardDescription>
-                  Verify that your KSeF configuration is working
+                  Ověřte, že vaše konfigurace KSeF funguje
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -306,9 +306,9 @@ export default function KSeFSettingsPage() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="test">Test Environment</SelectItem>
-                      <SelectItem value="demo">Demo Environment</SelectItem>
-                      <SelectItem value="production">Production</SelectItem>
+                      <SelectItem value="test">Testovací prostředí</SelectItem>
+                      <SelectItem value="demo">Demo prostředí</SelectItem>
+                      <SelectItem value="production">Produkce</SelectItem>
                     </SelectContent>
                   </Select>
 
@@ -321,12 +321,12 @@ export default function KSeFSettingsPage() {
                     {isTestingConnection ? (
                       <>
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Testing...
+                        Testování...
                       </>
                     ) : (
                       <>
                         <RefreshCw className="mr-2 h-4 w-4" />
-                        Test Connection
+                        Test připojení
                       </>
                     )}
                   </Button>
@@ -334,21 +334,21 @@ export default function KSeFSettingsPage() {
                   {connectionStatus === 'success' && (
                     <Badge variant="outline" className="text-green-600 border-green-200 bg-green-50">
                       <CheckCircle2 className="mr-1 h-3 w-3" />
-                      Connected
+                      Připojeno
                     </Badge>
                   )}
 
                   {connectionStatus === 'error' && (
                     <Badge variant="outline" className="text-red-600 border-red-200 bg-red-50">
                       <AlertCircle className="mr-1 h-3 w-3" />
-                      Failed
+                      Selhalo
                     </Badge>
                   )}
                 </div>
 
                 <p className="text-xs text-muted-foreground">
-                  Use the test or demo environment for development and testing.
-                  Only use production when you're ready to submit real invoices.
+                  Použijte testovací nebo demo prostředí pro vývoj a testování.
+                  Produkční prostředí používejte pouze když jste připraveni odesílat skutečné faktury.
                 </p>
               </CardContent>
             </Card>

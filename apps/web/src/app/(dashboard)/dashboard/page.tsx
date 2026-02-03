@@ -19,6 +19,14 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 
+const statusLabels: Record<string, string> = {
+  DRAFT: 'Koncept',
+  SENT: 'Odesláno',
+  PAID: 'Zaplaceno',
+  OVERDUE: 'Po splatnosti',
+  CANCELLED: 'Zrušeno',
+};
+
 export default function DashboardPage() {
   const { user, currentOrganization } = useAuth();
   const currency = (currentOrganization?.currency as 'CZK' | 'PLN' | 'EUR') ?? 'CZK';
@@ -41,11 +49,11 @@ export default function DashboardPage() {
 
   return (
     <div className="flex flex-col">
-      <Header title="Dashboard">
+      <Header title="Přehled">
         <Button asChild>
           <Link href="/invoices/new">
             <Plus className="mr-2 h-4 w-4" />
-            New Invoice
+            Nová faktura
           </Link>
         </Button>
       </Header>
@@ -54,12 +62,12 @@ export default function DashboardPage() {
         {/* Welcome message */}
         <div>
           <h2 className="text-2xl font-bold tracking-tight">
-            Welcome back, {user?.name ?? 'there'}!
+            Vítejte zpět, {user?.name ?? 'uživateli'}!
           </h2>
           <p className="text-muted-foreground">
             {currentOrganization
-              ? `Here's what's happening with ${currentOrganization.name} today.`
-              : 'Get started by creating your organization.'}
+              ? `Zde je přehled společnosti ${currentOrganization.name} pro dnešní den.`
+              : 'Začněte vytvořením vaší organizace.'}
           </p>
         </div>
 
@@ -69,15 +77,15 @@ export default function DashboardPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <AlertCircle className="h-5 w-5 text-yellow-500" />
-                Complete Your Setup
+                Dokončete nastavení
               </CardTitle>
               <CardDescription>
-                Create your organization to start using SME Financial OS
+                Vytvořte organizaci pro používání SME Financial OS
               </CardDescription>
             </CardHeader>
             <CardContent>
               <Button asChild>
-                <Link href="/onboarding">Create Organization</Link>
+                <Link href="/onboarding">Vytvořit organizaci</Link>
               </Button>
             </CardContent>
           </Card>
@@ -89,7 +97,7 @@ export default function DashboardPage() {
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Revenue</CardTitle>
+                  <CardTitle className="text-sm font-medium">Příjmy</CardTitle>
                   <TrendingUp className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
@@ -97,7 +105,7 @@ export default function DashboardPage() {
                     {statsLoading ? '...' : formatCurrency(stats?.revenue.current ?? 0, currency)}
                   </div>
                   <p className="text-xs text-muted-foreground flex items-center">
-                    This month
+                    Tento měsíc
                     {stats && stats.revenue.change !== 0 && (
                       <span className={`ml-1 flex items-center ${stats.revenue.change > 0 ? 'text-green-500' : 'text-red-500'}`}>
                         {stats.revenue.change > 0 ? (
@@ -114,7 +122,7 @@ export default function DashboardPage() {
 
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Unpaid Invoices</CardTitle>
+                  <CardTitle className="text-sm font-medium">Nezaplacené faktury</CardTitle>
                   <FileText className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
@@ -122,14 +130,14 @@ export default function DashboardPage() {
                     {statsLoading ? '...' : stats?.unpaid.count ?? 0}
                   </div>
                   <p className="text-xs text-muted-foreground">
-                    {formatCurrency(stats?.unpaid.total ?? 0, currency)} outstanding
+                    {formatCurrency(stats?.unpaid.total ?? 0, currency)} k úhradě
                   </p>
                 </CardContent>
               </Card>
 
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Expenses</CardTitle>
+                  <CardTitle className="text-sm font-medium">Náklady</CardTitle>
                   <Receipt className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
@@ -137,7 +145,7 @@ export default function DashboardPage() {
                     {statsLoading ? '...' : formatCurrency(stats?.expenses.current ?? 0, currency)}
                   </div>
                   <p className="text-xs text-muted-foreground flex items-center">
-                    This month
+                    Tento měsíc
                     {stats && stats.expenses.change !== 0 && (
                       <span className={`ml-1 flex items-center ${stats.expenses.change > 0 ? 'text-red-500' : 'text-green-500'}`}>
                         {stats.expenses.change > 0 ? (
@@ -166,7 +174,7 @@ export default function DashboardPage() {
                     {statsLoading ? '...' : formatCurrency(stats?.cashFlow ?? 0, currency)}
                   </div>
                   <p className="text-xs text-muted-foreground">
-                    Revenue minus expenses
+                    Příjmy mínus náklady
                   </p>
                 </CardContent>
               </Card>
@@ -178,7 +186,7 @@ export default function DashboardPage() {
                 <CardHeader className="pb-2">
                   <CardTitle className="text-sm font-medium flex items-center gap-2 text-destructive">
                     <AlertCircle className="h-4 w-4" />
-                    Overdue Invoices ({overdueInvoices.length})
+                    Faktury po splatnosti ({overdueInvoices.length})
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -200,7 +208,7 @@ export default function DashboardPage() {
                             {formatCurrency(invoice.total, currency)}
                           </span>
                           <span className="text-xs text-destructive ml-2">
-                            Due {formatDate(invoice.dueDate)}
+                            Splatnost {formatDate(invoice.dueDate)}
                           </span>
                         </div>
                       </Link>
@@ -209,7 +217,7 @@ export default function DashboardPage() {
                   {overdueInvoices.length > 3 && (
                     <Button asChild variant="link" className="mt-2 p-0 h-auto text-destructive">
                       <Link href="/invoices?status=OVERDUE">
-                        View all overdue invoices
+                        Zobrazit všechny faktury po splatnosti
                       </Link>
                     </Button>
                   )}
@@ -221,8 +229,8 @@ export default function DashboardPage() {
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               <Card>
                 <CardHeader>
-                  <CardTitle>Recent Invoices</CardTitle>
-                  <CardDescription>Your latest invoices</CardDescription>
+                  <CardTitle>Poslední faktury</CardTitle>
+                  <CardDescription>Vaše nejnovější faktury</CardDescription>
                 </CardHeader>
                 <CardContent>
                   {recentInvoices && recentInvoices.length > 0 ? (
@@ -236,7 +244,7 @@ export default function DashboardPage() {
                           <div>
                             <span className="font-medium">{invoice.number}</span>
                             <p className="text-xs text-muted-foreground">
-                              {invoice.contact?.name ?? 'No customer'}
+                              {invoice.contact?.name ?? 'Bez zákazníka'}
                             </p>
                           </div>
                           <Badge
@@ -248,24 +256,24 @@ export default function DashboardPage() {
                                 : 'default'
                             }
                           >
-                            {invoice.status}
+                            {statusLabels[invoice.status] ?? invoice.status}
                           </Badge>
                         </Link>
                       ))}
                     </div>
                   ) : (
-                    <p className="text-sm text-muted-foreground">No invoices yet</p>
+                    <p className="text-sm text-muted-foreground">Zatím žádné faktury</p>
                   )}
                   <Button asChild variant="outline" className="mt-4 w-full">
-                    <Link href="/invoices/new">Create Invoice</Link>
+                    <Link href="/invoices/new">Vytvořit fakturu</Link>
                   </Button>
                 </CardContent>
               </Card>
 
               <Card>
                 <CardHeader>
-                  <CardTitle>Recent Expenses</CardTitle>
-                  <CardDescription>Your latest expenses</CardDescription>
+                  <CardTitle>Poslední náklady</CardTitle>
+                  <CardDescription>Vaše nejnovější náklady</CardDescription>
                 </CardHeader>
                 <CardContent>
                   {recentExpenses && recentExpenses.length > 0 ? (
@@ -277,7 +285,7 @@ export default function DashboardPage() {
                         >
                           <div>
                             <span className="font-medium">
-                              {expense.vendorName ?? 'Unknown vendor'}
+                              {expense.vendorName ?? 'Neznámý dodavatel'}
                             </span>
                             <p className="text-xs text-muted-foreground">
                               {formatDate(expense.date)}
@@ -290,36 +298,36 @@ export default function DashboardPage() {
                       ))}
                     </div>
                   ) : (
-                    <p className="text-sm text-muted-foreground">No expenses yet</p>
+                    <p className="text-sm text-muted-foreground">Zatím žádné náklady</p>
                   )}
                   <Button asChild variant="outline" className="mt-4 w-full">
-                    <Link href="/expenses">View Expenses</Link>
+                    <Link href="/expenses">Zobrazit náklady</Link>
                   </Button>
                 </CardContent>
               </Card>
 
               <Card>
                 <CardHeader>
-                  <CardTitle>Quick Actions</CardTitle>
-                  <CardDescription>Common tasks</CardDescription>
+                  <CardTitle>Rychlé akce</CardTitle>
+                  <CardDescription>Běžné úkoly</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-2">
                   <Button asChild variant="outline" className="w-full justify-start">
                     <Link href="/invoices/new">
                       <FileText className="mr-2 h-4 w-4" />
-                      Create Invoice
+                      Vytvořit fakturu
                     </Link>
                   </Button>
                   <Button asChild variant="outline" className="w-full justify-start">
                     <Link href="/expenses">
                       <Receipt className="mr-2 h-4 w-4" />
-                      Add Expense
+                      Přidat náklad
                     </Link>
                   </Button>
                   <Button asChild variant="outline" className="w-full justify-start">
                     <Link href="/contacts">
                       <Plus className="mr-2 h-4 w-4" />
-                      Add Contact
+                      Přidat kontakt
                     </Link>
                   </Button>
                 </CardContent>

@@ -27,13 +27,13 @@ import {
 } from '@/components/ui/dropdown-menu';
 
 const navigation = [
-  { name: 'Dashboard', href: '/', icon: LayoutDashboard },
-  { name: 'Invoices', href: '/invoices', icon: FileText },
-  { name: 'Expenses', href: '/expenses', icon: Receipt },
-  { name: 'Banking', href: '/banking', icon: Building2 },
-  { name: 'Contacts', href: '/contacts', icon: Users },
-  { name: 'Reports', href: '/reports', icon: BarChart3 },
-  { name: 'Settings', href: '/settings', icon: Settings },
+  { name: 'Přehled', href: '/dashboard', icon: LayoutDashboard },
+  { name: 'Faktury', href: '/invoices', icon: FileText },
+  { name: 'Náklady', href: '/expenses', icon: Receipt },
+  { name: 'Bankovnictví', href: '/banking', icon: Building2 },
+  { name: 'Kontakty', href: '/contacts', icon: Users },
+  { name: 'Reporty', href: '/reports', icon: BarChart3 },
+  { name: 'Nastavení', href: '/settings', icon: Settings },
 ];
 
 export function Sidebar() {
@@ -83,7 +83,7 @@ export function Sidebar() {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start" className="w-56">
-              <DropdownMenuLabel>Switch Organization</DropdownMenuLabel>
+              <DropdownMenuLabel>Přepnout organizaci</DropdownMenuLabel>
               <DropdownMenuSeparator />
               {organizations.map((org) => (
                 <DropdownMenuItem
@@ -145,24 +145,24 @@ export function Sidebar() {
                 </AvatarFallback>
               </Avatar>
               <div className="flex flex-col items-start text-left">
-                <span className="text-sm font-medium">{user?.name ?? 'User'}</span>
+                <span className="text-sm font-medium">{user?.name ?? 'Uživatel'}</span>
                 <span className="text-xs text-muted-foreground">{user?.email}</span>
               </div>
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start" className="w-56">
-            <DropdownMenuLabel>My Account</DropdownMenuLabel>
+            <DropdownMenuLabel>Můj účet</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
               <Link href="/settings">
                 <Settings className="mr-2 h-4 w-4" />
-                Settings
+                Nastavení
               </Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={logout} className="text-destructive">
               <LogOut className="mr-2 h-4 w-4" />
-              Log out
+              Odhlásit se
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

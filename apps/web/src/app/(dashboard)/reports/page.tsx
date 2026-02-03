@@ -7,26 +7,26 @@ import Link from 'next/link';
 
 const reports = [
   {
-    title: 'Income Report',
-    description: 'View your revenue by period, customer, or category',
+    title: 'Report příjmů',
+    description: 'Zobrazit vaše příjmy podle období, zákazníka nebo kategorie',
     icon: TrendingUp,
     href: '/reports/income',
   },
   {
-    title: 'Expense Report',
-    description: 'Analyze your spending by category and time period',
+    title: 'Report nákladů',
+    description: 'Analyzovat vaše výdaje podle kategorie a časového období',
     icon: Receipt,
     href: '/reports/expenses',
   },
   {
-    title: 'Cash Flow',
-    description: 'Track money coming in and going out',
+    title: 'Cash flow',
+    description: 'Sledovat peníze přicházející a odcházející',
     icon: PiggyBank,
     href: '/reports/cash-flow',
   },
   {
-    title: 'VAT Summary',
-    description: 'Prepare your VAT returns with calculated amounts',
+    title: 'Souhrn DPH',
+    description: 'Připravit vaše daňová přiznání DPH s vypočtenými částkami',
     icon: BarChart3,
     href: '/reports/vat',
   },
@@ -35,7 +35,7 @@ const reports = [
 export default function ReportsPage() {
   return (
     <div className="flex flex-col">
-      <Header title="Reports" />
+      <Header title="Reporty" />
 
       <div className="flex-1 p-4 md:p-6">
         <div className="grid gap-4 md:grid-cols-2">

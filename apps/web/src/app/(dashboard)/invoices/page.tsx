@@ -46,13 +46,13 @@ import { formatCurrency, formatDate } from '@/lib/utils';
 import type { InvoiceStatus } from '@sme-financial-os/shared';
 
 const statusConfig: Record<string, { label: string; variant: 'default' | 'secondary' | 'destructive' | 'outline' | 'success' | 'warning' }> = {
-  DRAFT: { label: 'Draft', variant: 'secondary' },
-  SENT: { label: 'Sent', variant: 'default' },
-  VIEWED: { label: 'Viewed', variant: 'default' },
-  PAID: { label: 'Paid', variant: 'success' },
-  PARTIALLY_PAID: { label: 'Partial', variant: 'warning' },
-  OVERDUE: { label: 'Overdue', variant: 'destructive' },
-  CANCELLED: { label: 'Cancelled', variant: 'outline' },
+  DRAFT: { label: 'Koncept', variant: 'secondary' },
+  SENT: { label: 'Odesláno', variant: 'default' },
+  VIEWED: { label: 'Zobrazeno', variant: 'default' },
+  PAID: { label: 'Zaplaceno', variant: 'success' },
+  PARTIALLY_PAID: { label: 'Částečně', variant: 'warning' },
+  OVERDUE: { label: 'Po splatnosti', variant: 'destructive' },
+  CANCELLED: { label: 'Zrušeno', variant: 'outline' },
 };
 
 export default function InvoicesPage() {
@@ -82,7 +82,7 @@ export default function InvoicesPage() {
   const invoices = data?.items ?? [];
 
   const handleDelete = (invoiceId: string) => {
-    if (confirm('Are you sure you want to delete this invoice?')) {
+    if (confirm('Opravdu chcete smazat tuto fakturu?')) {
       deleteMutation.mutate({ id: invoiceId });
     }
   };
@@ -97,11 +97,11 @@ export default function InvoicesPage() {
 
   return (
     <div className="flex flex-col">
-      <Header title="Invoices">
+      <Header title="Faktury">
         <Button asChild>
           <Link href="/invoices/new">
             <Plus className="mr-2 h-4 w-4" />
-            New Invoice
+            Nová faktura
           </Link>
         </Button>
       </Header>
@@ -112,7 +112,7 @@ export default function InvoicesPage() {
           <div className="relative flex-1 max-w-sm">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
-              placeholder="Search invoices..."
+              placeholder="Hledat faktury..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="pl-9"
@@ -120,15 +120,15 @@ export default function InvoicesPage() {
           </div>
           <Select value={statusFilter} onValueChange={setStatusFilter}>
             <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Filter by status" />
+              <SelectValue placeholder="Filtr podle stavu" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Statuses</SelectItem>
-              <SelectItem value="DRAFT">Draft</SelectItem>
-              <SelectItem value="SENT">Sent</SelectItem>
-              <SelectItem value="PAID">Paid</SelectItem>
-              <SelectItem value="OVERDUE">Overdue</SelectItem>
-              <SelectItem value="CANCELLED">Cancelled</SelectItem>
+              <SelectItem value="all">Všechny stavy</SelectItem>
+              <SelectItem value="DRAFT">Koncept</SelectItem>
+              <SelectItem value="SENT">Odesláno</SelectItem>
+              <SelectItem value="PAID">Zaplaceno</SelectItem>
+              <SelectItem value="OVERDUE">Po splatnosti</SelectItem>
+              <SelectItem value="CANCELLED">Zrušeno</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -140,14 +140,14 @@ export default function InvoicesPage() {
               <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-muted">
                 <FileText className="h-6 w-6 text-muted-foreground" />
               </div>
-              <CardTitle>No invoices yet</CardTitle>
-              <CardDescription>Create your first invoice to get started</CardDescription>
+              <CardTitle>Zatím žádné faktury</CardTitle>
+              <CardDescription>Vytvořte svou první fakturu</CardDescription>
             </CardHeader>
             <CardContent className="text-center">
               <Button asChild>
                 <Link href="/invoices/new">
                   <Plus className="mr-2 h-4 w-4" />
-                  Create Invoice
+                  Vytvořit fakturu
                 </Link>
               </Button>
             </CardContent>
@@ -157,7 +157,7 @@ export default function InvoicesPage() {
         {/* No results */}
         {!isLoading && invoices.length === 0 && (search || statusFilter !== 'all') && (
           <div className="text-center py-12">
-            <p className="text-muted-foreground">No invoices found matching your filters</p>
+            <p className="text-muted-foreground">Nebyly nalezeny žádné faktury odpovídající filtrům</p>
           </div>
         )}
 
@@ -167,12 +167,12 @@ export default function InvoicesPage() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Number</TableHead>
-                  <TableHead>Customer</TableHead>
-                  <TableHead>Issue Date</TableHead>
-                  <TableHead>Due Date</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="text-right">Amount</TableHead>
+                  <TableHead>Číslo</TableHead>
+                  <TableHead>Zákazník</TableHead>
+                  <TableHead>Datum vystavení</TableHead>
+                  <TableHead>Datum splatnosti</TableHead>
+                  <TableHead>Stav</TableHead>
+                  <TableHead className="text-right">Částka</TableHead>
                   <TableHead className="w-[50px]"></TableHead>
                 </TableRow>
               </TableHeader>
@@ -204,7 +204,7 @@ export default function InvoicesPage() {
                       <TableCell>
                         <Badge variant={isOverdue && invoice.status !== 'PAID' ? 'destructive' : status.variant}>
                           {isOverdue && invoice.status !== 'PAID' && invoice.status !== 'CANCELLED'
-                            ? 'Overdue'
+                            ? 'Po splatnosti'
                             : status.label}
                         </Badge>
                       </TableCell>
@@ -222,25 +222,25 @@ export default function InvoicesPage() {
                             <DropdownMenuItem asChild>
                               <Link href={`/invoices/${invoice.id}`}>
                                 <Eye className="mr-2 h-4 w-4" />
-                                View
+                                Zobrazit
                               </Link>
                             </DropdownMenuItem>
                             {invoice.status === 'DRAFT' && (
                               <DropdownMenuItem asChild>
                                 <Link href={`/invoices/${invoice.id}/edit`}>
                                   <Pencil className="mr-2 h-4 w-4" />
-                                  Edit
+                                  Upravit
                                 </Link>
                               </DropdownMenuItem>
                             )}
                             <DropdownMenuItem onClick={() => handleDuplicate(invoice.id)}>
                               <Copy className="mr-2 h-4 w-4" />
-                              Duplicate
+                              Duplikovat
                             </DropdownMenuItem>
                             {invoice.status !== 'PAID' && invoice.status !== 'CANCELLED' && (
                               <DropdownMenuItem onClick={() => handleMarkPaid(invoice.id)}>
                                 <CheckCircle className="mr-2 h-4 w-4" />
-                                Mark as Paid
+                                Označit jako zaplaceno
                               </DropdownMenuItem>
                             )}
                             <DropdownMenuSeparator />
@@ -250,7 +250,7 @@ export default function InvoicesPage() {
                                 className="text-destructive"
                               >
                                 <Trash2 className="mr-2 h-4 w-4" />
-                                Delete
+                                Smazat
                               </DropdownMenuItem>
                             )}
                           </DropdownMenuContent>

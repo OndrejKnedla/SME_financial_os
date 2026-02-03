@@ -119,7 +119,7 @@ export default function NewInvoicePage() {
   const handleSubmit = (asDraft: boolean = true) => {
     const validItems = items.filter((item) => item.description && item.unitPrice > 0);
     if (validItems.length === 0) {
-      alert('Please add at least one invoice item');
+      alert('Přidejte prosím alespoň jednu položku faktury');
       return;
     }
 
@@ -139,17 +139,17 @@ export default function NewInvoicePage() {
 
   return (
     <div className="flex flex-col">
-      <Header title="New Invoice">
+      <Header title="Nová faktura">
         <div className="flex gap-2">
           <Button variant="outline" onClick={() => router.back()}>
-            Cancel
+            Zrušit
           </Button>
           <Button
             onClick={() => handleSubmit(true)}
             disabled={createMutation.isPending}
           >
             <Save className="mr-2 h-4 w-4" />
-            {createMutation.isPending ? 'Saving...' : 'Save Draft'}
+            {createMutation.isPending ? 'Ukládání...' : 'Uložit koncept'}
           </Button>
         </div>
       </Header>
@@ -159,15 +159,15 @@ export default function NewInvoicePage() {
           {/* Customer & Dates */}
           <Card>
             <CardHeader>
-              <CardTitle>Invoice Details</CardTitle>
+              <CardTitle>Detaily faktury</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid gap-4 md:grid-cols-3">
                 <div className="space-y-2">
-                  <Label>Customer</Label>
+                  <Label>Zákazník</Label>
                   <Select value={contactId} onValueChange={setContactId}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select customer" />
+                      <SelectValue placeholder="Vyberte zákazníka" />
                     </SelectTrigger>
                     <SelectContent>
                       {contacts.map((contact: typeof contacts[number]) => (
@@ -180,7 +180,7 @@ export default function NewInvoicePage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label>Issue Date</Label>
+                  <Label>Datum vystavení</Label>
                   <Input
                     type="date"
                     value={issueDate}
@@ -189,7 +189,7 @@ export default function NewInvoicePage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label>Due Date</Label>
+                  <Label>Datum splatnosti</Label>
                   <Input
                     type="date"
                     value={dueDate}
@@ -203,10 +203,10 @@ export default function NewInvoicePage() {
           {/* Invoice Items */}
           <Card>
             <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle>Items</CardTitle>
+              <CardTitle>Položky</CardTitle>
               <Button variant="outline" size="sm" onClick={addItem}>
                 <Plus className="mr-2 h-4 w-4" />
-                Add Item
+                Přidat položku
               </Button>
             </CardHeader>
             <CardContent>
@@ -214,11 +214,11 @@ export default function NewInvoicePage() {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead className="w-[40%]">Description</TableHead>
-                      <TableHead className="w-[12%]">Qty</TableHead>
-                      <TableHead className="w-[18%]">Unit Price</TableHead>
-                      <TableHead className="w-[12%]">VAT %</TableHead>
-                      <TableHead className="w-[15%] text-right">Total</TableHead>
+                      <TableHead className="w-[40%]">Popis</TableHead>
+                      <TableHead className="w-[12%]">Množství</TableHead>
+                      <TableHead className="w-[18%]">Jednotková cena</TableHead>
+                      <TableHead className="w-[12%]">DPH %</TableHead>
+                      <TableHead className="w-[15%] text-right">Celkem</TableHead>
                       <TableHead className="w-[50px]"></TableHead>
                     </TableRow>
                   </TableHeader>
@@ -229,7 +229,7 @@ export default function NewInvoicePage() {
                         <TableRow key={item.id}>
                           <TableCell>
                             <Input
-                              placeholder="Item description"
+                              placeholder="Popis položky"
                               value={item.description}
                               onChange={(e) =>
                                 updateItem(item.id, 'description', e.target.value)
@@ -301,15 +301,15 @@ export default function NewInvoicePage() {
               <div className="mt-4 flex justify-end">
                 <div className="w-64 space-y-2">
                   <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Subtotal</span>
+                    <span className="text-muted-foreground">Mezisoučet</span>
                     <span>{formatCurrency(totals.subtotal, currency)}</span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">VAT</span>
+                    <span className="text-muted-foreground">DPH</span>
                     <span>{formatCurrency(totals.taxAmount, currency)}</span>
                   </div>
                   <div className="flex justify-between border-t pt-2 font-semibold">
-                    <span>Total</span>
+                    <span>Celkem</span>
                     <span>{formatCurrency(totals.total, currency)}</span>
                   </div>
                 </div>
@@ -320,11 +320,11 @@ export default function NewInvoicePage() {
           {/* Notes */}
           <Card>
             <CardHeader>
-              <CardTitle>Notes</CardTitle>
+              <CardTitle>Poznámky</CardTitle>
             </CardHeader>
             <CardContent>
               <Textarea
-                placeholder="Additional notes or payment instructions..."
+                placeholder="Další poznámky nebo platební instrukce..."
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
                 rows={3}

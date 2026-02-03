@@ -48,7 +48,7 @@ export default function ContactsPage() {
   };
 
   const handleDelete = (contactId: string) => {
-    if (confirm('Are you sure you want to delete this contact?')) {
+    if (confirm('Opravdu chcete smazat tento kontakt?')) {
       deleteMutation.mutate({ id: contactId });
     }
   };
@@ -61,10 +61,10 @@ export default function ContactsPage() {
 
   return (
     <div className="flex flex-col">
-      <Header title="Contacts">
+      <Header title="Kontakty">
         <Button onClick={() => setIsDialogOpen(true)}>
           <Plus className="mr-2 h-4 w-4" />
-          Add Contact
+          Přidat kontakt
         </Button>
       </Header>
 
@@ -74,7 +74,7 @@ export default function ContactsPage() {
           <div className="relative flex-1 max-w-sm">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
-              placeholder="Search contacts..."
+              placeholder="Hledat kontakty..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="pl-9"
@@ -89,15 +89,15 @@ export default function ContactsPage() {
               <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-muted">
                 <Users className="h-6 w-6 text-muted-foreground" />
               </div>
-              <CardTitle>No contacts yet</CardTitle>
+              <CardTitle>Zatím žádné kontakty</CardTitle>
               <CardDescription>
-                Add your customers and suppliers to easily create invoices
+                Přidejte své zákazníky a dodavatele pro snadné vytváření faktur
               </CardDescription>
             </CardHeader>
             <CardContent className="text-center">
               <Button onClick={() => setIsDialogOpen(true)}>
                 <Plus className="mr-2 h-4 w-4" />
-                Add Contact
+                Přidat kontakt
               </Button>
             </CardContent>
           </Card>
@@ -106,7 +106,7 @@ export default function ContactsPage() {
         {/* No search results */}
         {!isLoading && contacts.length === 0 && search && (
           <div className="text-center py-12">
-            <p className="text-muted-foreground">No contacts found matching "{search}"</p>
+            <p className="text-muted-foreground">Nebyly nalezeny žádné kontakty odpovídající "{search}"</p>
           </div>
         )}
 
@@ -116,11 +116,11 @@ export default function ContactsPage() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Type</TableHead>
-                  <TableHead>Email</TableHead>
-                  <TableHead>Tax ID</TableHead>
-                  <TableHead>Payment Terms</TableHead>
+                  <TableHead>Název</TableHead>
+                  <TableHead>Typ</TableHead>
+                  <TableHead>E-mail</TableHead>
+                  <TableHead>IČO</TableHead>
+                  <TableHead>Platební podmínky</TableHead>
                   <TableHead className="w-[50px]"></TableHead>
                 </TableRow>
               </TableHeader>
@@ -130,12 +130,12 @@ export default function ContactsPage() {
                     <TableCell className="font-medium">{contact.name}</TableCell>
                     <TableCell>
                       <Badge variant={contact.type === 'COMPANY' ? 'default' : 'secondary'}>
-                        {contact.type === 'COMPANY' ? 'Company' : 'Individual'}
+                        {contact.type === 'COMPANY' ? 'Společnost' : 'Fyzická osoba'}
                       </Badge>
                     </TableCell>
                     <TableCell>{contact.email ?? '-'}</TableCell>
                     <TableCell>{contact.taxId ?? '-'}</TableCell>
-                    <TableCell>{contact.paymentTerms} days</TableCell>
+                    <TableCell>{contact.paymentTerms} dní</TableCell>
                     <TableCell>
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
@@ -146,14 +146,14 @@ export default function ContactsPage() {
                         <DropdownMenuContent align="end">
                           <DropdownMenuItem onClick={() => handleEdit(contact.id)}>
                             <Pencil className="mr-2 h-4 w-4" />
-                            Edit
+                            Upravit
                           </DropdownMenuItem>
                           <DropdownMenuItem
                             onClick={() => handleDelete(contact.id)}
                             className="text-destructive"
                           >
                             <Trash2 className="mr-2 h-4 w-4" />
-                            Delete
+                            Smazat
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
