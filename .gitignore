@@ -41,3 +41,4 @@ coverage
 *.tsbuildinfo
 .vercel
 .env*.local
+.tokens.local
